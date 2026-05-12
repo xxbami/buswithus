@@ -1,0 +1,3954 @@
+<!DOCTYPE html>
+<html lang="sq">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+    <title>BusWithUs — Bileta Digjitale · Tiranë</title>
+    <link rel="icon" type="image/jpg"
+        href="https://www.shutterstock.com/image-vector/logo-bus-icon-school-vector-600nw-2381986327.jpg">
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Bricolage+Grotesque:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap"
+        rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://unpkg.com/@zxing/library@0.19.1/umd/index.min.js"></script>
+    <style>
+        :root {
+            --blue: #1D4ED8;
+            --blue-lt: #3B82F6;
+            --blue-xl: #EFF6FF;
+            --blue-glow: rgba(29, 78, 216, .22);
+            --green: #059669;
+            --green-lt: #10B981;
+            --green-xl: #ECFDF5;
+            --amber: #D97706;
+            --amber-lt: #F59E0B;
+            --amber-xl: #FFFBEB;
+            --red: #DC2626;
+            --red-lt: #EF4444;
+            --red-xl: #FEF2F2;
+            --ink: #060B18;
+            --ink2: #0F172A;
+            --ink3: #1E293B;
+            --slate: #334155;
+            --muted: #64748B;
+            --dim: #94A3B8;
+            --dimmer: #CBD5E1;
+            --bg: #F0F4FF;
+            --bg2: #E8EEFF;
+            --card: #FFFFFF;
+            --bdr: rgba(0, 0, 0, .08);
+            --bdr2: rgba(0, 0, 0, .13);
+            --font-display: 'Bricolage Grotesque', sans-serif;
+            --font-body: 'DM Sans', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            --sh1: 0 1px 2px rgba(0, 0, 0, .05);
+            --sh2: 0 4px 20px rgba(0, 0, 0, .07), 0 1px 3px rgba(0, 0, 0, .04);
+            --sh3: 0 10px 40px rgba(0, 0, 0, .1), 0 4px 8px rgba(0, 0, 0, .04);
+            --sh4: 0 24px 72px rgba(0, 0, 0, .16), 0 8px 20px rgba(0, 0, 0, .08);
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0
+        }
+
+        html {
+            scroll-behavior: smooth;
+            -webkit-tap-highlight-color: transparent
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: var(--ink);
+            color: #334155;
+            -webkit-font-smoothing: antialiased;
+            overflow: hidden;
+            height: 100dvh;
+            height: 100vh;
+            line-height: 1.5
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit
+        }
+
+        button {
+            font-family: inherit;
+            cursor: pointer;
+            border: none;
+            background: none;
+            outline: none
+        }
+
+        img {
+            display: block
+        }
+
+        input,
+        select {
+            font-family: inherit;
+            outline: none
+        }
+
+        /* ══════════════ SPLASH ══════════════ */
+        #splash {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: var(--ink);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden
+        }
+
+        #splash.out {
+            animation: splashOut .7s cubic-bezier(.4, 0, .2, 1) forwards
+        }
+
+        @keyframes splashOut {
+            to {
+                opacity: 0;
+                transform: scale(1.05)
+            }
+        }
+
+        .sp-mesh {
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 80% 70% at 20% 20%, rgba(29, 78, 216, .35) 0%, transparent 55%),
+                radial-gradient(ellipse 60% 50% at 80% 80%, rgba(16, 185, 129, .2) 0%, transparent 50%),
+                radial-gradient(ellipse 45% 40% at 55% 10%, rgba(245, 158, 11, .12) 0%, transparent 50%)
+        }
+
+        .sp-dots {
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(circle, rgba(255, 255, 255, .06) 1px, transparent 1px);
+            background-size: 28px 28px
+        }
+
+        .sp-c {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2.4rem
+        }
+
+        .sp-emblem {
+            width: 100px;
+            height: 100px;
+            border-radius: 28px;
+            background: linear-gradient(145deg, #1D4ED8, #60A5FA);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 0 12px rgba(29, 78, 216, .12), 0 0 0 28px rgba(29, 78, 216, .06), 0 24px 60px rgba(29, 78, 216, .5);
+            animation: spFloat 4s ease-in-out infinite
+        }
+
+        @keyframes spFloat {
+
+            0%,
+            100% {
+                transform: translateY(0) rotate(0deg)
+            }
+
+            50% {
+                transform: translateY(-14px) rotate(2deg)
+            }
+        }
+
+        .sp-emblem svg {
+            width: 58px;
+            height: 58px
+        }
+
+        .sp-title {
+            text-align: center
+        }
+
+        .sp-name {
+            font-family: var(--font-display);
+            font-size: 3rem;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: -2px;
+            line-height: 1
+        }
+
+        .sp-name em {
+            font-style: normal;
+            color: #93C5FD
+        }
+
+        .sp-sub {
+            font-size: .65rem;
+            letter-spacing: .3em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, .22);
+            margin-top: .4rem;
+            font-weight: 500
+        }
+
+        .sp-bar {
+            width: 200px;
+            height: 1.5px;
+            background: rgba(255, 255, 255, .08);
+            border-radius: 2px;
+            overflow: hidden;
+            position: relative
+        }
+
+        .sp-bar::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: var(--w, 0%);
+            background: linear-gradient(90deg, #1D4ED8, #93C5FD, #fff);
+            border-radius: 2px;
+            transition: width .04s
+        }
+
+        .sp-pct {
+            font-family: var(--font-mono);
+            font-size: .6rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, .18);
+            text-align: center;
+            margin-top: .55rem;
+            letter-spacing: .08em
+        }
+
+        /* ══════════════ AUTH ══════════════ */
+        #authScreen {
+            position: fixed;
+            inset: 0;
+            z-index: 8000;
+            display: none;
+            overflow-y: auto
+        }
+
+        #authScreen.active {
+            display: grid;
+            place-items: center;
+            min-height: 100vh;
+            padding: 1.5rem
+        }
+
+        .auth-bg {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(135deg, #060B18 0%, #0F172A 40%, #1E293B 100%)
+        }
+
+        .auth-bg-mesh {
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 60% 50% at 15% 30%, rgba(29, 78, 216, .28) 0%, transparent 55%),
+                radial-gradient(ellipse 40% 40% at 85% 70%, rgba(16, 185, 129, .15) 0%, transparent 50%)
+        }
+
+        .auth-wrap {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 420px
+        }
+
+        .auth-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: .8rem;
+            margin-bottom: 2.5rem
+        }
+
+        .al-ico {
+            width: 50px;
+            height: 50px;
+            border-radius: 15px;
+            background: linear-gradient(145deg, #1D4ED8, #3B82F6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 24px rgba(29, 78, 216, .45)
+        }
+
+        .al-ico svg {
+            width: 30px;
+            height: 30px
+        }
+
+        .al-name {
+            font-family: var(--font-display);
+            font-size: 1.7rem;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: -1px
+        }
+
+        .al-name em {
+            font-style: normal;
+            color: #93C5FD
+        }
+
+        .auth-card {
+            background: rgba(255, 255, 255, .06);
+            backdrop-filter: blur(28px);
+            -webkit-backdrop-filter: blur(28px);
+            border: 1px solid rgba(255, 255, 255, .1);
+            border-radius: 22px;
+            overflow: hidden;
+            box-shadow: 0 40px 100px rgba(0, 0, 0, .6)
+        }
+
+        .auth-tabs {
+            display: flex;
+            border-bottom: 1px solid rgba(255, 255, 255, .08)
+        }
+
+        .at {
+            flex: 1;
+            padding: 1rem;
+            font-size: .82rem;
+            font-weight: 700;
+            text-align: center;
+            cursor: pointer;
+            color: rgba(255, 255, 255, .3);
+            transition: all .2s;
+            letter-spacing: .02em;
+            position: relative
+        }
+
+        .at.on {
+            color: #fff
+        }
+
+        .at.on::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 16px;
+            right: 16px;
+            height: 2px;
+            background: var(--blue-lt);
+            border-radius: 2px
+        }
+
+        .auth-body {
+            padding: 2rem
+        }
+
+        .a-err {
+            background: rgba(220, 38, 38, .12);
+            border: 1px solid rgba(220, 38, 38, .25);
+            border-radius: 10px;
+            padding: .65rem 1rem;
+            font-size: .8rem;
+            color: #FCA5A5;
+            margin-bottom: 1.1rem;
+            display: none;
+            line-height: 1.5
+        }
+
+        .a-err.on {
+            display: block
+        }
+
+        .afg {
+            margin-bottom: 1.1rem
+        }
+
+        .afg label {
+            display: block;
+            font-size: .62rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .15em;
+            color: rgba(255, 255, 255, .3);
+            margin-bottom: .4rem
+        }
+
+        .afg input {
+            width: 100%;
+            padding: .84rem 1rem;
+            background: rgba(255, 255, 255, .07);
+            border: 1px solid rgba(255, 255, 255, .1);
+            border-radius: 12px;
+            font-size: .9rem;
+            color: #fff;
+            transition: all .2s;
+            font-family: var(--font-body)
+        }
+
+        .afg input::placeholder {
+            color: rgba(255, 255, 255, .2)
+        }
+
+        .afg input:focus {
+            border-color: rgba(59, 130, 246, .6);
+            background: rgba(29, 78, 216, .15);
+            box-shadow: 0 0 0 3px rgba(29, 78, 216, .2)
+        }
+
+        .a-btn {
+            width: 100%;
+            padding: .9rem;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #1D4ED8, #3B82F6);
+            color: #fff;
+            font-size: .9rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: .5rem;
+            transition: all .22s;
+            box-shadow: 0 6px 20px rgba(29, 78, 216, .4);
+            font-family: var(--font-display);
+            letter-spacing: -.2px;
+            margin-top: .4rem
+        }
+
+        .a-btn:hover:not(:disabled) {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 30px rgba(29, 78, 216, .5)
+        }
+
+        .a-btn:disabled {
+            opacity: .6;
+            cursor: not-allowed
+        }
+
+        .auth-demo {
+            margin-top: 1rem;
+            text-align: center;
+            font-size: .72rem;
+            color: rgba(255, 255, 255, .22);
+            cursor: pointer;
+            transition: color .15s
+        }
+
+        .auth-demo:hover {
+            color: rgba(255, 255, 255, .5)
+        }
+
+        /* ══════════════ TUTORIAL OVERLAY ══════════════ */
+        #tutOverlay {
+            position: fixed;
+            inset: 0;
+            z-index: 8500;
+            display: none;
+            background: rgba(6, 11, 24, .92);
+            backdrop-filter: blur(8px)
+        }
+
+        #tutOverlay.on {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            animation: fadeIn .3s ease
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0
+            }
+
+            to {
+                opacity: 1
+            }
+        }
+
+        .tut-card {
+            width: 100%;
+            max-width: 500px;
+            background: var(--card);
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: var(--sh4);
+            animation: tutPop .4s cubic-bezier(.22, 1, .36, 1)
+        }
+
+        @keyframes tutPop {
+            from {
+                opacity: 0;
+                transform: translateY(24px) scale(.96)
+            }
+
+            to {
+                opacity: 1;
+                transform: none
+            }
+        }
+
+        .tut-prog {
+            height: 3px;
+            background: var(--bg2)
+        }
+
+        .tut-prog-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #1D4ED8, #3B82F6);
+            transition: width .4s cubic-bezier(.4, 0, .2, 1)
+        }
+
+        .tut-visual {
+            background: linear-gradient(145deg, #0F172A, #1E293B);
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden
+        }
+
+        .tut-visual::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at center, rgba(29, 78, 216, .3) 0%, transparent 65%)
+        }
+
+        .tut-v-ico {
+            font-size: 5rem;
+            position: relative;
+            z-index: 1;
+            animation: tutIco 3s ease-in-out infinite;
+            filter: drop-shadow(0 8px 24px rgba(29, 78, 216, .5))
+        }
+
+        @keyframes tutIco {
+
+            0%,
+            100% {
+                transform: scale(1) translateY(0)
+            }
+
+            50% {
+                transform: scale(1.1) translateY(-8px)
+            }
+        }
+
+        .tut-step-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(255, 255, 255, .1);
+            border: 1px solid rgba(255, 255, 255, .15);
+            border-radius: 20px;
+            padding: .2rem .65rem;
+            font-size: .62rem;
+            font-weight: 700;
+            color: rgba(255, 255, 255, .5);
+            letter-spacing: .08em;
+            font-family: var(--font-mono)
+        }
+
+        .tut-body {
+            padding: 1.8rem 2rem
+        }
+
+        .tut-tag {
+            font-size: .6rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .2em;
+            color: var(--blue-lt);
+            margin-bottom: .6rem;
+            display: flex;
+            align-items: center;
+            gap: .4rem
+        }
+
+        .tut-tag::before {
+            content: '';
+            width: 16px;
+            height: 2px;
+            background: var(--blue-lt);
+            border-radius: 1px;
+            display: block
+        }
+
+        .tut-body h3 {
+            font-family: var(--font-display);
+            font-size: 1.55rem;
+            font-weight: 800;
+            color: var(--ink);
+            letter-spacing: -.5px;
+            line-height: 1.2;
+            margin-bottom: .8rem
+        }
+
+        .tut-body h3 mark {
+            background: linear-gradient(135deg, #1D4ED8, #3B82F6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text
+        }
+
+        .tut-body p {
+            font-size: .875rem;
+            color: var(--muted);
+            line-height: 1.8;
+            margin-bottom: 1.2rem
+        }
+
+        .tut-tips {
+            display: flex;
+            flex-direction: column;
+            gap: .5rem
+        }
+
+        .tut-tip {
+            display: flex;
+            align-items: flex-start;
+            gap: .75rem;
+            padding: .65rem .9rem;
+            background: var(--bg);
+            border-radius: 12px;
+            border: 1px solid var(--bdr)
+        }
+
+        .tut-tip-ico {
+            width: 32px;
+            height: 32px;
+            border-radius: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            flex-shrink: 0
+        }
+
+        .tut-tip-txt {
+            font-size: .8rem;
+            color: var(--slate);
+            line-height: 1.5;
+            padding-top: .15rem
+        }
+
+        .tut-tip-txt strong {
+            color: var(--ink);
+            display: block;
+            font-size: .78rem;
+            margin-bottom: .1rem
+        }
+
+        .tut-foot {
+            padding: 1.2rem 2rem 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: .7rem;
+            border-top: 1px solid var(--bdr)
+        }
+
+        .tut-dots {
+            display: flex;
+            gap: .3rem;
+            flex: 1
+        }
+
+        .tut-dot {
+            height: 5px;
+            border-radius: 3px;
+            transition: all .3s cubic-bezier(.4, 0, .2, 1);
+            cursor: pointer
+        }
+
+        .tut-dot.on {
+            background: var(--blue);
+            width: 22px
+        }
+
+        .tut-dot:not(.on) {
+            background: var(--dimmer);
+            width: 5px
+        }
+
+        .tut-skip {
+            font-size: .72rem;
+            font-weight: 600;
+            color: var(--dim);
+            cursor: pointer;
+            white-space: nowrap;
+            transition: color .15s;
+            padding: .4rem .5rem
+        }
+
+        .tut-skip:hover {
+            color: var(--muted)
+        }
+
+        .tut-prev {
+            padding: .7rem 1.1rem;
+            border-radius: 11px;
+            background: var(--bg);
+            border: 1.5px solid var(--bdr2);
+            color: var(--muted);
+            font-size: .82rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all .15s;
+            white-space: nowrap
+        }
+
+        .tut-prev:hover {
+            color: var(--ink);
+            border-color: var(--blue)
+        }
+
+        .tut-next {
+            padding: .7rem 1.4rem;
+            border-radius: 11px;
+            background: linear-gradient(135deg, #1D4ED8, #3B82F6);
+            color: #fff;
+            font-size: .85rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all .2s;
+            box-shadow: 0 4px 14px rgba(29, 78, 216, .35);
+            white-space: nowrap;
+            font-family: var(--font-display)
+        }
+
+        .tut-next:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 22px rgba(29, 78, 216, .45)
+        }
+
+        /* ══════════════ APP SHELL ══════════════ */
+        #app {
+            display: none;
+            height: 100dvh;
+            height: 100vh;
+            flex-direction: column;
+            background: var(--bg);
+            overflow: hidden
+        }
+
+        #app.active {
+            display: flex
+        }
+
+        /* TOPNAV */
+        #nav {
+            height: 58px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 1.2rem;
+            background: #fff;
+            border-bottom: 1px solid var(--bdr);
+            flex-shrink: 0;
+            z-index: 50
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: .55rem;
+            cursor: pointer;
+            user-select: none
+        }
+
+        .nav-ico {
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            background: linear-gradient(145deg, #1D4ED8, #3B82F6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 3px 10px rgba(29, 78, 216, .3);
+            transition: transform .2s
+        }
+
+        .nav-brand:hover .nav-ico {
+            transform: scale(1.07) rotate(-3deg)
+        }
+
+        .nav-ico svg {
+            width: 20px;
+            height: 20px
+        }
+
+        .nav-nm {
+            font-family: var(--font-display);
+            font-weight: 800;
+            font-size: 1.05rem;
+            letter-spacing: -.5px;
+            color: var(--ink)
+        }
+
+        .nav-nm em {
+            font-style: normal;
+            color: var(--blue)
+        }
+
+        .nav-r {
+            display: flex;
+            align-items: center;
+            gap: .5rem
+        }
+
+        .nav-help {
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            background: var(--blue-xl);
+            color: var(--blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: .72rem;
+            font-weight: 800;
+            transition: all .15s;
+            border: 1.5px solid rgba(29, 78, 216, .15)
+        }
+
+        .nav-help:hover {
+            background: var(--blue);
+            color: #fff
+        }
+
+        .nav-av {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1D4ED8, #7C3AED);
+            color: #fff;
+            font-weight: 700;
+            font-size: .7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer
+        }
+
+        .nav-logout {
+            padding: .3rem .72rem;
+            border-radius: 8px;
+            border: 1.5px solid var(--bdr2);
+            font-size: .7rem;
+            font-weight: 600;
+            color: var(--muted);
+            transition: all .15s
+        }
+
+        .nav-logout:hover {
+            border-color: #FCA5A5;
+            color: var(--red)
+        }
+
+        /* PAGES */
+        .pages {
+            flex: 1;
+            overflow: hidden;
+            position: relative
+        }
+
+        .pg {
+            display: none;
+            height: 100%;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--dimmer) transparent
+        }
+
+        .pg::-webkit-scrollbar {
+            width: 3px
+        }
+
+        .pg::-webkit-scrollbar-thumb {
+            background: var(--dimmer);
+            border-radius: 2px
+        }
+
+        .pg.on {
+            display: block;
+            animation: pgFade .3s cubic-bezier(.22, 1, .36, 1)
+        }
+
+        @keyframes pgFade {
+            from {
+                opacity: 0;
+                transform: translateY(8px)
+            }
+
+            to {
+                opacity: 1;
+                transform: none
+            }
+        }
+
+        /* TABBAR */
+        .tabbar {
+            display: flex;
+            background: #fff;
+            border-top: 1px solid var(--bdr);
+            height: 60px;
+            flex-shrink: 0;
+            box-shadow: 0 -2px 16px rgba(0, 0, 0, .04)
+        }
+
+        .tab {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: .12rem;
+            cursor: pointer;
+            color: var(--dimmer);
+            transition: all .2s;
+            position: relative;
+            padding-top: .2rem
+        }
+
+        .tab.on {
+            color: var(--blue)
+        }
+
+        .tab.on::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 28px;
+            height: 2.5px;
+            background: var(--blue);
+            border-radius: 0 0 3px 3px
+        }
+
+        .tab svg {
+            width: 19px;
+            height: 19px;
+            transition: transform .2s
+        }
+
+        .tab.on svg {
+            transform: translateY(-1px)
+        }
+
+        .tab-lbl {
+            font-size: .52rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+            font-family: var(--font-display)
+        }
+
+        /* ══════════════ HOME PAGE ══════════════ */
+        .home-hero {
+            position: relative;
+            background: var(--ink2);
+            padding: 1.6rem 1.3rem 0;
+            overflow: hidden
+        }
+
+        .hh-photo {
+            position: absolute;
+            inset: 0
+        }
+
+        .hh-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: .08;
+            filter: saturate(.3)
+        }
+
+        .hh-photo::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(160deg, rgba(6, 11, 24, .8) 0%, rgba(15, 23, 42, .92) 100%)
+        }
+
+        .hh-mesh {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse 60% 80% at 80% 0, rgba(29, 78, 216, .3) 0%, transparent 60%);
+            pointer-events: none;
+            z-index: 1
+        }
+
+        .hh-c {
+            position: relative;
+            z-index: 2
+        }
+
+        .hh-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: .5rem;
+            background: rgba(255, 255, 255, .08);
+            border: 1px solid rgba(255, 255, 255, .12);
+            border-radius: 30px;
+            padding: .3rem .88rem;
+            font-size: .63rem;
+            font-weight: 700;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, .6);
+            margin-bottom: .9rem
+        }
+
+        .live-dot {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: #10B981;
+            box-shadow: 0 0 8px rgba(16, 185, 129, .9);
+            animation: blink 2s ease infinite
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1)
+            }
+
+            50% {
+                opacity: .3;
+                transform: scale(.8)
+            }
+        }
+
+        .hh-title {
+            font-family: var(--font-display);
+            font-size: clamp(1.9rem, 5.5vw, 3rem);
+            font-weight: 800;
+            color: #fff;
+            line-height: 1.05;
+            letter-spacing: -1.5px;
+            margin-bottom: .65rem
+        }
+
+        .hh-title em {
+            font-style: normal;
+            background: linear-gradient(135deg, #93C5FD, #A5B4FC);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text
+        }
+
+        .hh-sub {
+            font-size: .85rem;
+            color: rgba(255, 255, 255, .42);
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+            max-width: 340px
+        }
+
+        /* Quick Book Widget */
+        .qb-wrap {
+            background: #fff;
+            border-radius: 20px 20px 0 0;
+            padding: 1.5rem 1.3rem 0;
+            box-shadow: var(--sh4);
+            position: relative;
+            z-index: 3
+        }
+
+        .qb-head {
+            display: flex;
+            align-items: center;
+            gap: .6rem;
+            margin-bottom: 1.1rem
+        }
+
+        .qb-head-ico {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #1D4ED8, #3B82F6);
+            border-radius: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 3px 10px rgba(29, 78, 216, .3)
+        }
+
+        .qb-head-ico svg {
+            width: 18px;
+            height: 18px
+        }
+
+        .qb-head-t {
+            font-family: var(--font-display);
+            font-size: .95rem;
+            font-weight: 700;
+            color: var(--ink)
+        }
+
+        .qb-head-sub {
+            font-size: .7rem;
+            color: var(--muted);
+            margin-left: auto;
+            font-weight: 500
+        }
+
+        .qb-type-tabs {
+            display: flex;
+            gap: .22rem;
+            background: var(--bg);
+            border-radius: 10px;
+            padding: .22rem;
+            margin-bottom: 1.1rem
+        }
+
+        .qb-tt {
+            flex: 1;
+            padding: .38rem;
+            border-radius: 8px;
+            font-size: .7rem;
+            font-weight: 600;
+            text-align: center;
+            cursor: pointer;
+            color: var(--muted);
+            transition: all .18s
+        }
+
+        .qb-tt.on {
+            background: #fff;
+            color: var(--blue);
+            box-shadow: var(--sh1);
+            font-weight: 700
+        }
+
+        .qb-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: .65rem;
+            margin-bottom: .65rem
+        }
+
+        .qbf label {
+            display: block;
+            font-size: .6rem;
+            font-weight: 700;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            color: var(--dim);
+            margin-bottom: .3rem
+        }
+
+        .qbf input,
+        .qbf select {
+            width: 100%;
+            padding: .68rem .9rem;
+            background: var(--bg);
+            border: 1.5px solid var(--bdr2);
+            border-radius: 10px;
+            font-size: .85rem;
+            font-weight: 500;
+            color: var(--ink);
+            transition: all .18s;
+            font-family: var(--font-body)
+        }
+
+        .qbf input:focus,
+        .qbf select:focus {
+            border-color: var(--blue);
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(29, 78, 216, .1)
+        }
+
+        .qbf input::placeholder {
+            color: var(--dimmer);
+            font-weight: 400
+        }
+
+        .qb-total {
+            background: linear-gradient(135deg, rgba(29, 78, 216, .07), rgba(59, 130, 246, .04));
+            border: 1px solid rgba(29, 78, 216, .15);
+            border-radius: 10px;
+            padding: .6rem .95rem;
+            font-size: .83rem;
+            font-weight: 700;
+            color: var(--blue);
+            display: none;
+            margin-bottom: .65rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between
+        }
+
+        .qb-total-lbl {
+            font-size: .65rem;
+            font-weight: 600;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: .08em
+        }
+
+        .qb-total-val {
+            font-family: var(--font-display);
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: var(--blue)
+        }
+
+        .qb-total.hidden {
+            display: none
+        }
+
+        .qb-btn {
+            width: 100%;
+            padding: .9rem;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #1D4ED8, #2563EB);
+            color: #fff;
+            font-size: .88rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: .5rem;
+            transition: all .22s;
+            box-shadow: 0 6px 20px rgba(29, 78, 216, .35);
+            margin-bottom: 1.4rem;
+            font-family: var(--font-display);
+            letter-spacing: -.2px
+        }
+
+        .qb-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 28px rgba(29, 78, 216, .45)
+        }
+
+        .qb-btn svg {
+            width: 16px;
+            height: 16px
+        }
+
+        /* Stats */
+        .stats-strip {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: .55rem;
+            padding: 1.1rem 1.3rem
+        }
+
+        .ss-card {
+            background: #fff;
+            border: 1px solid var(--bdr);
+            border-radius: 16px;
+            padding: .9rem .8rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--sh1)
+        }
+
+        .ss-card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            background: var(--card-glow, rgba(29, 78, 216, .04));
+            transition: opacity .2s
+        }
+
+        .ss-card:hover::after {
+            opacity: 1
+        }
+
+        .ss-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2.5px;
+            border-radius: 0 0 1px 1px
+        }
+
+        .ss-n {
+            font-family: var(--font-display);
+            font-size: 1.55rem;
+            font-weight: 800;
+            line-height: 1;
+            margin-bottom: .1rem
+        }
+
+        .ss-l {
+            font-size: .55rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+            color: var(--dim)
+        }
+
+        /* Section header */
+        .sec-h {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: .2rem 1.3rem .7rem
+        }
+
+        .sec-title {
+            font-family: var(--font-display);
+            font-size: .9rem;
+            font-weight: 700;
+            color: var(--ink);
+            display: flex;
+            align-items: center;
+            gap: .5rem
+        }
+
+        .sec-cnt {
+            background: var(--bg2);
+            border: 1px solid var(--bdr);
+            border-radius: 20px;
+            padding: .08rem .5rem;
+            font-size: .65rem;
+            font-weight: 700;
+            color: var(--muted);
+            font-family: var(--font-mono)
+        }
+
+        .sec-link {
+            font-size: .73rem;
+            font-weight: 600;
+            color: var(--blue);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: .25rem;
+            transition: all .15s
+        }
+
+        .sec-link:hover {
+            gap: .45rem
+        }
+
+        /* Line chips */
+        .chips {
+            display: flex;
+            gap: .6rem;
+            padding: 0 1.3rem 1.6rem;
+            overflow-x: auto;
+            scrollbar-width: none
+        }
+
+        .chips::-webkit-scrollbar {
+            display: none
+        }
+
+        .chip {
+            flex-shrink: 0;
+            background: #fff;
+            border: 1.5px solid var(--bdr);
+            border-radius: 16px;
+            padding: .9rem 1rem;
+            min-width: 155px;
+            cursor: pointer;
+            transition: all .22s;
+            box-shadow: var(--sh1);
+            position: relative;
+            overflow: hidden
+        }
+
+        .chip::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: var(--chip-c, #1D4ED8);
+            opacity: 0;
+            transition: opacity .2s
+        }
+
+        .chip:hover {
+            border-color: transparent;
+            box-shadow: var(--sh3);
+            transform: translateY(-4px)
+        }
+
+        .chip:hover::before {
+            opacity: .04
+        }
+
+        .chip-num {
+            width: 34px;
+            height: 34px;
+            border-radius: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-display);
+            font-weight: 800;
+            font-size: .68rem;
+            color: #fff;
+            margin-bottom: .55rem;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, .16)
+        }
+
+        .chip-name {
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: .78rem;
+            color: var(--ink);
+            margin-bottom: .1rem
+        }
+
+        .chip-route {
+            font-size: .65rem;
+            color: var(--muted);
+            line-height: 1.45
+        }
+
+        .chip-price {
+            margin-top: .4rem;
+            font-family: var(--font-display);
+            font-weight: 800;
+            font-size: .72rem;
+            color: var(--blue);
+            display: flex;
+            align-items: center;
+            gap: .25rem
+        }
+
+        /* ══════════════ LINES PAGE ══════════════ */
+        .pg-hero {
+            position: relative;
+            height: 150px;
+            overflow: hidden;
+            display: flex;
+            align-items: flex-end;
+            padding: 1.2rem 1.3rem
+        }
+
+        .pg-hero img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: brightness(.3) saturate(.5)
+        }
+
+        .pg-hero::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(120deg, rgba(6, 11, 24, .85) 0%, transparent 55%), linear-gradient(to top, rgba(6, 11, 24, .9), transparent 55%)
+        }
+
+        .pg-hero-c {
+            position: relative;
+            z-index: 1
+        }
+
+        .pg-hero-c h2 {
+            font-family: var(--font-display);
+            font-size: clamp(1.55rem, 4vw, 2.2rem);
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: -.8px;
+            line-height: 1;
+            margin-bottom: .2rem
+        }
+
+        .pg-hero-c h2 em {
+            font-style: italic;
+            color: #93C5FD
+        }
+
+        .pg-hero-c p {
+            color: rgba(255, 255, 255, .38);
+            font-size: .73rem
+        }
+
+        .filter-bar {
+            display: flex;
+            align-items: center;
+            gap: .35rem;
+            margin: 1rem 1.3rem .6rem;
+            background: #fff;
+            border: 1px solid var(--bdr);
+            border-radius: 12px;
+            padding: .5rem .85rem;
+            box-shadow: var(--sh1);
+            overflow-x: auto;
+            scrollbar-width: none
+        }
+
+        .filter-bar::-webkit-scrollbar {
+            display: none
+        }
+
+        .fb-lbl {
+            font-size: .6rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .12em;
+            color: var(--dim);
+            margin-right: .3rem;
+            flex-shrink: 0
+        }
+
+        .fb-btn {
+            padding: .3rem .8rem;
+            border-radius: 8px;
+            font-size: .7rem;
+            font-weight: 700;
+            color: var(--muted);
+            border: 1.5px solid transparent;
+            transition: all .15s;
+            cursor: pointer;
+            white-space: nowrap;
+            flex-shrink: 0
+        }
+
+        .fb-btn:hover {
+            color: var(--ink)
+        }
+
+        .fb-btn.on {
+            background: var(--blue);
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(29, 78, 216, .3)
+        }
+
+        .lines-list {
+            display: flex;
+            flex-direction: column;
+            gap: .5rem;
+            padding: 0 1.3rem 1.8rem
+        }
+
+        .lr {
+            background: #fff;
+            border: 1.5px solid var(--bdr);
+            border-radius: 16px;
+            padding: .95rem 1rem;
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            align-items: center;
+            gap: .9rem;
+            cursor: pointer;
+            transition: all .22s;
+            box-shadow: var(--sh1)
+        }
+
+        .lr:hover {
+            border-color: rgba(29, 78, 216, .3);
+            box-shadow: var(--sh3);
+            transform: translateX(4px)
+        }
+
+        .lr-num {
+            width: 46px;
+            height: 46px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-display);
+            font-weight: 800;
+            font-size: .8rem;
+            color: #fff;
+            flex-shrink: 0;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, .15)
+        }
+
+        .lr-info h4 {
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: .87rem;
+            color: var(--ink);
+            margin-bottom: .12rem
+        }
+
+        .lr-route {
+            font-size: .74rem;
+            color: var(--muted);
+            font-weight: 500;
+            line-height: 1.4
+        }
+
+        .lr-stops {
+            font-size: .64rem;
+            color: var(--dim);
+            line-height: 1.4;
+            margin-top: .06rem
+        }
+
+        .lr-r {
+            text-align: right;
+            flex-shrink: 0
+        }
+
+        .lr-price {
+            font-family: var(--font-display);
+            font-size: .98rem;
+            font-weight: 800;
+            color: var(--ink);
+            line-height: 1
+        }
+
+        .lr-price small {
+            font-size: .58rem;
+            color: var(--muted);
+            font-weight: 400;
+            display: block;
+            letter-spacing: .04em
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: .3rem;
+            font-size: .58rem;
+            font-weight: 700;
+            letter-spacing: .06em;
+            text-transform: uppercase;
+            padding: .18rem .5rem;
+            border-radius: 20px;
+            margin-top: .3rem
+        }
+
+        .badge-on {
+            background: #ECFDF5;
+            color: #065F46
+        }
+
+        .badge-busy {
+            background: #FFFBEB;
+            color: #92400E
+        }
+
+        /* ══════════════ BOOKING PAGE ══════════════ */
+        .book-layout {
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 1.2rem;
+            padding: 1.1rem 1.3rem 2rem;
+            align-items: start
+        }
+
+        .bl-label {
+            font-size: .65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .12em;
+            color: var(--muted);
+            margin-bottom: .7rem
+        }
+
+        .bl-list {
+            display: flex;
+            flex-direction: column;
+            gap: .4rem
+        }
+
+        .blr {
+            background: #fff;
+            border: 1.5px solid var(--bdr);
+            border-radius: 13px;
+            padding: .82rem 1rem;
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            align-items: center;
+            gap: .82rem;
+            cursor: pointer;
+            transition: all .2s;
+            box-shadow: var(--sh1)
+        }
+
+        .blr:hover {
+            border-color: rgba(29, 78, 216, .25);
+            box-shadow: var(--sh2)
+        }
+
+        .blr.sel {
+            border-color: var(--blue);
+            background: rgba(29, 78, 216, .03);
+            box-shadow: 0 0 0 1px var(--blue), var(--sh1)
+        }
+
+        .blr-num {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-display);
+            font-weight: 800;
+            font-size: .75rem;
+            color: #fff;
+            flex-shrink: 0
+        }
+
+        .blr-info h4 {
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: .83rem;
+            color: var(--ink);
+            margin-bottom: .06rem
+        }
+
+        .blr-stops {
+            font-size: .66rem;
+            color: var(--muted);
+            line-height: 1.45
+        }
+
+        .blr-price {
+            font-family: var(--font-display);
+            font-weight: 800;
+            font-size: .88rem;
+            color: var(--ink);
+            text-align: right
+        }
+
+        .blr-price small {
+            font-size: .58rem;
+            color: var(--muted);
+            font-weight: 400;
+            display: block
+        }
+
+        /* Form card */
+        .fcard {
+            background: #fff;
+            border: 1px solid var(--bdr);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: var(--sh3);
+            position: sticky;
+            top: 1rem
+        }
+
+        .fcard-hd {
+            background: linear-gradient(145deg, #060B18, #1E293B);
+            padding: 1.2rem 1.4rem
+        }
+
+        .fcard-hd h3 {
+            font-family: var(--font-display);
+            font-size: .92rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: .1rem;
+            display: flex;
+            align-items: center;
+            gap: .45rem
+        }
+
+        .fcard-hd p {
+            font-size: .68rem;
+            color: rgba(255, 255, 255, .3)
+        }
+
+        .fcard-body {
+            padding: 1.2rem 1.4rem
+        }
+
+        .fcard-sel {
+            background: rgba(29, 78, 216, .06);
+            border: 1.5px solid rgba(29, 78, 216, .2);
+            border-radius: 11px;
+            padding: .75rem .95rem;
+            margin-bottom: .95rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            animation: fadeIn .3s ease
+        }
+
+        .fs-name {
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: .85rem;
+            color: var(--ink)
+        }
+
+        .fs-sub {
+            font-size: .65rem;
+            color: var(--muted);
+            margin-top: .06rem
+        }
+
+        .fs-price {
+            font-family: var(--font-display);
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: var(--blue)
+        }
+
+        .fcg {
+            margin-bottom: .82rem
+        }
+
+        .fcg label {
+            display: block;
+            font-size: .6rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .1em;
+            color: var(--muted);
+            margin-bottom: .3rem
+        }
+
+        .fcg input,
+        .fcg select {
+            width: 100%;
+            padding: .66rem .9rem;
+            background: var(--bg);
+            border: 1.5px solid var(--bdr2);
+            border-radius: 10px;
+            font-size: .85rem;
+            font-weight: 500;
+            color: var(--ink);
+            transition: all .18s;
+            font-family: var(--font-body)
+        }
+
+        .fcg input:focus,
+        .fcg select:focus {
+            border-color: var(--blue);
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(29, 78, 216, .1)
+        }
+
+        .fcg input::placeholder {
+            color: var(--dimmer)
+        }
+
+        .fcg-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: .65rem
+        }
+
+        .fcard-sep {
+            height: 1px;
+            background: var(--bdr);
+            margin: .82rem 0
+        }
+
+        .total-box {
+            background: var(--ink);
+            border-radius: 12px;
+            padding: .85rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: .8rem
+        }
+
+        .tb-lbl {
+            font-size: .58rem;
+            font-weight: 700;
+            color: rgba(255, 255, 255, .3);
+            text-transform: uppercase;
+            letter-spacing: .12em
+        }
+
+        .tb-amt {
+            font-family: var(--font-display);
+            font-size: 1.32rem;
+            font-weight: 800;
+            color: #93C5FD;
+            letter-spacing: -.4px
+        }
+
+        .fcard-btn {
+            width: 100%;
+            padding: .88rem;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #1D4ED8, #2563EB);
+            color: #fff;
+            font-size: .88rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: .45rem;
+            transition: all .2s;
+            box-shadow: 0 6px 18px rgba(29, 78, 216, .35);
+            font-family: var(--font-display)
+        }
+
+        .fcard-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 26px rgba(29, 78, 216, .45)
+        }
+
+        /* ══════════════ MAP PAGE ══════════════ */
+        .map-wrap {
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            height: calc(100dvh - 58px - 60px);
+            height: calc(100vh - 58px - 60px)
+        }
+
+        .map-sb {
+            background: #fff;
+            border-right: 1px solid var(--bdr);
+            overflow-y: auto
+        }
+
+        .map-sbh {
+            padding: 1.1rem 1.1rem .85rem;
+            border-bottom: 1px solid var(--bdr);
+            position: sticky;
+            top: 0;
+            background: #fff;
+            z-index: 5
+        }
+
+        .map-sbh h3 {
+            font-family: var(--font-display);
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: var(--ink);
+            letter-spacing: -.3px;
+            margin-bottom: .12rem
+        }
+
+        .map-sbh p {
+            font-size: .66rem;
+            color: var(--muted)
+        }
+
+        .map-pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: .3rem;
+            background: var(--blue);
+            color: #fff;
+            padding: .32rem .72rem;
+            border-radius: 8px;
+            font-size: .67rem;
+            font-weight: 700;
+            margin-top: .5rem;
+            transition: background .15s
+        }
+
+        .map-pdf-btn:hover {
+            background: #1a44c4
+        }
+
+        .map-lines {
+            padding: .5rem
+        }
+
+        .ml-row {
+            display: flex;
+            align-items: center;
+            gap: .55rem;
+            padding: .44rem .55rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background .12s;
+            margin-bottom: .1rem
+        }
+
+        .ml-row:hover {
+            background: var(--bg)
+        }
+
+        .ml-badge {
+            width: 29px;
+            height: 29px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-display);
+            font-size: .6rem;
+            font-weight: 800;
+            color: #fff;
+            flex-shrink: 0
+        }
+
+        .ml-name {
+            font-family: var(--font-display);
+            font-size: .76rem;
+            font-weight: 700;
+            color: var(--ink)
+        }
+
+        .ml-route {
+            font-size: .63rem;
+            color: var(--muted)
+        }
+
+        .map-main {
+            position: relative;
+            overflow: hidden
+        }
+
+        .map-main iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block
+        }
+
+        .map-bar {
+            position: absolute;
+            top: .9rem;
+            left: .9rem;
+            right: .9rem;
+            background: rgba(255, 255, 255, .96);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--bdr);
+            border-radius: 14px;
+            padding: .58rem .95rem;
+            display: flex;
+            align-items: center;
+            gap: .65rem;
+            box-shadow: var(--sh3);
+            z-index: 10
+        }
+
+        .mb-ico {
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            background: var(--blue-xl);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: .8rem;
+            flex-shrink: 0
+        }
+
+        .mb-text strong {
+            font-family: var(--font-display);
+            font-size: .78rem;
+            font-weight: 700;
+            color: var(--ink)
+        }
+
+        .mb-text small {
+            display: block;
+            font-size: .62rem;
+            color: var(--muted)
+        }
+
+        .mb-link {
+            margin-left: auto;
+            background: var(--blue);
+            color: #fff;
+            padding: .3rem .75rem;
+            border-radius: 8px;
+            font-size: .67rem;
+            font-weight: 700;
+            transition: background .15s;
+            flex-shrink: 0
+        }
+
+        .mb-link:hover {
+            background: #1a44c4
+        }
+
+        /* ══════════════ SCAN PAGE ══════════════ */
+        .scan-wrap {
+            padding: 1.1rem 1.3rem 2rem;
+            max-width: 560px;
+            margin: 0 auto
+        }
+
+        .scan-card {
+            background: #fff;
+            border: 1px solid var(--bdr);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: var(--sh2);
+            margin-bottom: .9rem
+        }
+
+        .scan-hd {
+            background: linear-gradient(145deg, #060B18, #1E293B);
+            padding: 1.1rem 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: .7rem
+        }
+
+        .scan-hd-ico {
+            width: 36px;
+            height: 36px;
+            background: var(--blue);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 3px 10px rgba(29, 78, 216, .4)
+        }
+
+        .scan-hd-ico svg {
+            width: 20px;
+            height: 20px
+        }
+
+        .scan-hd-txt {
+            flex: 1
+        }
+
+        .scan-hd-txt strong {
+            font-family: var(--font-display);
+            font-size: .9rem;
+            font-weight: 700;
+            color: #fff;
+            display: block
+        }
+
+        .scan-hd-txt small {
+            font-size: .65rem;
+            color: rgba(255, 255, 255, .35)
+        }
+
+        .scan-toggle {
+            background: rgba(29, 78, 216, .8);
+            color: #fff;
+            padding: .44rem 1rem;
+            border-radius: 9px;
+            font-size: .75rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all .15s;
+            font-family: var(--font-display)
+        }
+
+        .scan-toggle:hover {
+            background: var(--blue)
+        }
+
+        .scan-vid-wrap {
+            position: relative;
+            background: #000;
+            aspect-ratio: 4/3;
+            display: flex;
+            align-items: center;
+            justify-content: center
+        }
+
+        #scanVideo {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none
+        }
+
+        #scanCanvas {
+            display: none;
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%
+        }
+
+        .scan-overlay {
+            display: none;
+            position: absolute;
+            inset: 0;
+            pointer-events: none
+        }
+
+        .scan-frame-box {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 196px;
+            height: 196px;
+            border: 2px solid var(--blue-lt);
+            border-radius: 16px;
+            box-shadow: 0 0 0 9999px rgba(0, 0, 0, .55);
+            animation: scanPulse 2s ease-in-out infinite
+        }
+
+        @keyframes scanPulse {
+
+            0%,
+            100% {
+                box-shadow: 0 0 0 9999px rgba(0, 0, 0, .55), 0 0 0 0 rgba(29, 78, 216, .4)
+            }
+
+            50% {
+                box-shadow: 0 0 0 9999px rgba(0, 0, 0, .55), 0 0 0 10px rgba(29, 78, 216, .1)
+            }
+        }
+
+        .scan-beam {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -96px);
+            width: 196px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--blue-lt), transparent);
+            animation: scanBeam 2s linear infinite
+        }
+
+        @keyframes scanBeam {
+            0% {
+                transform: translate(-50%, -96px)
+            }
+
+            100% {
+                transform: translate(-50%, 96px)
+            }
+        }
+
+        .scan-corner {
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            border-color: var(--blue-lt);
+            border-style: solid;
+            border-width: 0
+        }
+
+        .scan-corner.tl {
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) translate(-97px, -97px);
+            border-top-width: 3px;
+            border-left-width: 3px;
+            border-radius: 3px 0 0 0
+        }
+
+        .scan-corner.tr {
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) translate(79px, -97px);
+            border-top-width: 3px;
+            border-right-width: 3px;
+            border-radius: 0 3px 0 0
+        }
+
+        .scan-corner.bl {
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) translate(-97px, 79px);
+            border-bottom-width: 3px;
+            border-left-width: 3px;
+            border-radius: 0 0 0 3px
+        }
+
+        .scan-corner.br {
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) translate(79px, 79px);
+            border-bottom-width: 3px;
+            border-right-width: 3px;
+            border-radius: 0 0 3px 0
+        }
+
+        .scan-ph {
+            text-align: center;
+            color: rgba(255, 255, 255, .32);
+            padding: 2.5rem 1.5rem
+        }
+
+        .scan-ph-icon {
+            font-size: 3rem;
+            margin-bottom: .8rem;
+            opacity: .5
+        }
+
+        .scan-ph-txt {
+            font-size: .82rem;
+            font-weight: 600;
+            line-height: 1.65
+        }
+
+        .scan-status {
+            padding: .8rem 1.2rem;
+            font-size: .77rem;
+            font-weight: 500;
+            color: var(--muted);
+            border-top: 1px solid var(--bdr);
+            display: flex;
+            align-items: center;
+            gap: .5rem
+        }
+
+        /* Results */
+        .scan-result {
+            display: none;
+            margin-bottom: .9rem
+        }
+
+        .res-ok,
+        .res-fail {
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: var(--sh3);
+            display: none;
+            animation: tutPop .38s cubic-bezier(.22, 1, .36, 1)
+        }
+
+        .res-ok {
+            border: 2px solid var(--green-lt)
+        }
+
+        .res-fail {
+            border: 2px solid var(--red-lt)
+        }
+
+        .res-hd {
+            padding: 1.3rem 1.4rem;
+            display: flex;
+            align-items: center;
+            gap: .75rem
+        }
+
+        .res-hd.ok {
+            background: linear-gradient(135deg, #059669, #10B981)
+        }
+
+        .res-hd.fail {
+            background: linear-gradient(135deg, #DC2626, #EF4444)
+        }
+
+        .res-icon {
+            width: 46px;
+            height: 46px;
+            background: rgba(255, 255, 255, .2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem
+        }
+
+        .res-title {
+            font-family: var(--font-display);
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: -.3px
+        }
+
+        .res-sub {
+            font-size: .68rem;
+            color: rgba(255, 255, 255, .65)
+        }
+
+        .res-info {
+            padding: .95rem 1.4rem;
+            background: #fff
+        }
+
+        .ri {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: .35rem 0;
+            border-bottom: 1px solid var(--bdr);
+            font-size: .79rem
+        }
+
+        .ri:last-child {
+            border: none
+        }
+
+        .ri-l {
+            font-size: .58rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+            color: var(--dim);
+            padding-top: .1rem
+        }
+
+        .ri-v {
+            font-weight: 600;
+            color: var(--ink);
+            text-align: right;
+            max-width: 195px;
+            line-height: 1.4
+        }
+
+        .ri-v.id {
+            color: var(--blue);
+            font-family: var(--font-mono);
+            font-size: .68rem
+        }
+
+        .ri-v.total {
+            font-family: var(--font-display);
+            font-size: 1rem;
+            font-weight: 800;
+            color: var(--green)
+        }
+
+        .res-acts {
+            padding: .75rem 1.4rem 1.3rem;
+            background: #fff
+        }
+
+        .res-btn {
+            width: 100%;
+            padding: .72rem;
+            border-radius: 11px;
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: .83rem;
+            border: none;
+            cursor: pointer;
+            transition: all .15s
+        }
+
+        .res-btn.primary {
+            background: var(--blue);
+            color: #fff;
+            box-shadow: 0 3px 10px rgba(29, 78, 216, .3)
+        }
+
+        .res-btn.primary:hover {
+            background: var(--blue-lt)
+        }
+
+        .res-btn.secondary {
+            background: var(--bg);
+            color: var(--slate);
+            border: 1.5px solid var(--bdr2)
+        }
+
+        /* Manual */
+        .manual-card {
+            background: #fff;
+            border: 1px solid var(--bdr);
+            border-radius: 18px;
+            padding: 1.2rem 1.3rem;
+            box-shadow: var(--sh1)
+        }
+
+        .manual-lbl {
+            font-size: .68rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .12em;
+            color: var(--muted);
+            margin-bottom: .75rem;
+            display: flex;
+            align-items: center;
+            gap: .45rem;
+            font-family: var(--font-display)
+        }
+
+        .manual-row {
+            display: flex;
+            gap: .5rem
+        }
+
+        .manual-in {
+            flex: 1;
+            padding: .66rem .9rem;
+            background: var(--bg);
+            border: 1.5px solid var(--bdr2);
+            border-radius: 10px;
+            font-size: .85rem;
+            color: var(--ink);
+            font-family: var(--font-mono);
+            transition: all .18s;
+            letter-spacing: .04em
+        }
+
+        .manual-in:focus {
+            border-color: var(--blue);
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(29, 78, 216, .1)
+        }
+
+        .manual-in::placeholder {
+            color: var(--dimmer);
+            font-family: var(--font-body);
+            letter-spacing: 0
+        }
+
+        .manual-btn {
+            padding: .66rem 1.15rem;
+            border-radius: 10px;
+            background: var(--blue);
+            color: #fff;
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: .8rem;
+            border: none;
+            cursor: pointer;
+            transition: all .15s;
+            box-shadow: 0 3px 10px rgba(29, 78, 216, .3)
+        }
+
+        .manual-btn:hover {
+            background: var(--blue-lt)
+        }
+
+        #manualResult {
+            margin-top: .75rem;
+            display: none
+        }
+
+        /* ══════════════ QR MODAL ══════════════ */
+        .qr-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 7000;
+            background: rgba(6, 11, 24, .85);
+            backdrop-filter: blur(20px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem
+        }
+
+        .qr-overlay.on {
+            display: flex
+        }
+
+        .qr-modal {
+            width: 100%;
+            max-width: 380px;
+            background: #fff;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: var(--sh4);
+            animation: tutPop .35s cubic-bezier(.22, 1, .36, 1)
+        }
+
+        .qrm-hd {
+            background: linear-gradient(145deg, #060B18, #1E293B);
+            padding: 1.3rem 1.4rem;
+            position: relative
+        }
+
+        .qrm-close {
+            position: absolute;
+            top: .85rem;
+            right: .85rem;
+            background: rgba(255, 255, 255, .1);
+            border: none;
+            color: rgba(255, 255, 255, .4);
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            font-size: .8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all .15s
+        }
+
+        .qrm-close:hover {
+            background: rgba(255, 255, 255, .2);
+            color: #fff
+        }
+
+        .qrm-brand {
+            display: flex;
+            align-items: center;
+            gap: .55rem;
+            margin-bottom: .9rem
+        }
+
+        .qrm-brand-ico {
+            width: 30px;
+            height: 30px;
+            background: var(--blue);
+            border-radius: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center
+        }
+
+        .qrm-brand-ico svg {
+            width: 18px;
+            height: 18px
+        }
+
+        .qrm-brand-name {
+            font-family: var(--font-display);
+            font-size: 1rem;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: -.3px
+        }
+
+        .qrm-brand-name em {
+            font-style: normal;
+            color: #93C5FD
+        }
+
+        .qrm-tag {
+            font-size: .55rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .2em;
+            color: rgba(255, 255, 255, .25);
+            margin-bottom: .15rem
+        }
+
+        .qrm-lname {
+            font-family: var(--font-display);
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: -.3px
+        }
+
+        /* Perforated edge */
+        .qrm-perf {
+            height: 18px;
+            background: var(--bg);
+            overflow: hidden;
+            position: relative
+        }
+
+        .qrm-perf::before {
+            content: '';
+            position: absolute;
+            top: -9px;
+            left: -10px;
+            right: -10px;
+            height: 18px;
+            background: radial-gradient(circle at 50% 0, var(--bg) 9px, transparent 9px) -18px 0/36px 18px repeat-x
+        }
+
+        .qrm-qr {
+            background: var(--bg);
+            padding: 1.3rem;
+            text-align: center
+        }
+
+        .qrm-qr-wrap {
+            width: 160px;
+            height: 160px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 14px;
+            padding: 8px;
+            border: 1px solid var(--bdr);
+            box-shadow: var(--sh2)
+        }
+
+        .qrm-qr-wrap canvas,
+        .qrm-qr-wrap img {
+            width: 100% !important;
+            height: 100% !important
+        }
+
+        .qrm-hint {
+            margin-top: .55rem;
+            font-size: .63rem;
+            color: var(--muted);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: .3rem
+        }
+
+        .qrm-valid {
+            display: inline-flex;
+            align-items: center;
+            gap: .3rem;
+            background: var(--green-xl);
+            border: 1px solid #A7F3D0;
+            border-radius: 20px;
+            padding: .26rem .72rem;
+            font-size: .63rem;
+            font-weight: 700;
+            color: #065F46;
+            margin-top: .52rem
+        }
+
+        .qrm-info {
+            padding: .95rem 1.4rem .4rem
+        }
+
+        .qi {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: .34rem 0;
+            border-bottom: 1px solid var(--bdr);
+            font-size: .78rem
+        }
+
+        .qi:last-child {
+            border: none
+        }
+
+        .qi-l {
+            font-size: .58rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+            color: var(--dim);
+            padding-top: .1rem
+        }
+
+        .qi-v {
+            font-weight: 600;
+            color: var(--ink);
+            text-align: right;
+            max-width: 190px;
+            line-height: 1.4
+        }
+
+        .qi-v.id {
+            color: var(--blue);
+            font-family: var(--font-mono);
+            font-size: .67rem
+        }
+
+        .qi-v.total {
+            font-family: var(--font-display);
+            font-size: 1.02rem;
+            font-weight: 800;
+            color: var(--green)
+        }
+
+        .qrm-foot {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: .55rem;
+            padding: .75rem 1.4rem 1.3rem
+        }
+
+        .qrm-btn-p {
+            padding: .68rem;
+            border-radius: 11px;
+            background: var(--blue);
+            color: #fff;
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: .8rem;
+            border: none;
+            cursor: pointer;
+            transition: all .15s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: .38rem;
+            box-shadow: 0 3px 10px rgba(29, 78, 216, .3)
+        }
+
+        .qrm-btn-p:hover {
+            background: var(--blue-lt)
+        }
+
+        .qrm-btn-s {
+            padding: .68rem;
+            border-radius: 11px;
+            background: var(--bg);
+            color: var(--slate);
+            font-family: var(--font-display);
+            font-weight: 600;
+            font-size: .8rem;
+            border: 1.5px solid var(--bdr2);
+            cursor: pointer;
+            transition: all .15s
+        }
+
+        .qrm-btn-s:hover {
+            border-color: var(--blue);
+            color: var(--blue)
+        }
+
+        /* ══════════════ TOAST ══════════════ */
+        .toast {
+            position: fixed;
+            bottom: calc(60px + .9rem);
+            right: .9rem;
+            z-index: 9000;
+            background: var(--ink2);
+            color: #fff;
+            padding: .65rem 1.1rem;
+            border-radius: 12px;
+            font-size: .76rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: .48rem;
+            box-shadow: var(--sh3);
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all .28s cubic-bezier(.22, 1, .36, 1);
+            pointer-events: none;
+            max-width: 275px;
+            font-family: var(--font-display)
+        }
+
+        .toast-pip {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: var(--green-lt);
+            flex-shrink: 0
+        }
+
+        .toast.on {
+            opacity: 1;
+            transform: none
+        }
+
+        /* ══════════════ RESPONSIVE ══════════════ */
+        @media(max-width:800px) {
+            .book-layout {
+                grid-template-columns: 1fr
+            }
+
+            .fcard {
+                position: static
+            }
+
+            .map-wrap {
+                grid-template-columns: 1fr;
+                height: auto
+            }
+
+            .map-sb {
+                max-height: 35vh
+            }
+
+            .map-main {
+                height: 56vw;
+                min-height: 240px
+            }
+
+            .fcg-2 {
+                grid-template-columns: 1fr
+            }
+        }
+
+        @media(max-width:480px) {
+            #nav {
+                padding: 0 1rem
+            }
+
+            .home-hero,
+            .qb-wrap {
+                padding-left: 1rem;
+                padding-right: 1rem
+            }
+
+            .stats-strip,
+            .chips {
+                padding-left: 1rem;
+                padding-right: 1rem
+            }
+
+            .sec-h {
+                padding-left: 1rem;
+                padding-right: 1rem
+            }
+
+            .lines-list,
+            .book-layout,
+            .scan-wrap {
+                padding-left: 1rem;
+                padding-right: 1rem
+            }
+
+            .filter-bar {
+                margin-left: 1rem;
+                margin-right: 1rem
+            }
+
+            .pg-hero {
+                padding: 1rem
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- TOAST -->
+    <div class="toast" id="toast">
+        <div class="toast-pip"></div><span id="toastMsg"></span>
+    </div>
+
+    <!-- QR MODAL -->
+    <div class="qr-overlay" id="qrOv">
+        <div class="qr-modal">
+            <div class="qrm-hd">
+                <button class="qrm-close" onclick="closeQR()">✕</button>
+                <div class="qrm-brand">
+                    <div class="qrm-brand-ico">
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <rect x="2" y="6" width="20" height="12" rx="2.5" fill="white" opacity=".95" />
+                            <rect x="3.5" y="7.5" width="5.5" height="4" rx="1" fill="#2563EB" opacity=".55" />
+                            <rect x="10.5" y="7.5" width="4" height="4" rx="1" fill="#2563EB" opacity=".55" />
+                            <rect x="15.5" y="7.5" width="4" height="4" rx="1" fill="#2563EB" opacity=".55" />
+                            <circle cx="6.5" cy="18.5" r="2" fill="white" />
+                            <circle cx="6.5" cy="18.5" r=".9" fill="#2563EB" opacity=".7" />
+                            <circle cx="17.5" cy="18.5" r="2" fill="white" />
+                            <circle cx="17.5" cy="18.5" r=".9" fill="#2563EB" opacity=".7" />
+                        </svg>
+                    </div>
+                    <div class="qrm-brand-name">Bus<em>WithUs</em></div>
+                </div>
+                <div class="qrm-tag">Biletë Digjitale · Tiranë</div>
+                <div class="qrm-lname" id="qrmLineName">—</div>
+            </div>
+            <div class="qrm-perf"></div>
+            <div class="qrm-qr">
+                <div class="qrm-qr-wrap">
+                    <div id="qrCanvas"></div>
+                </div>
+                <div class="qrm-hint">📱 Skano me kamerën e telefonit</div>
+                <div class="qrm-valid">✓ Biletë e vlefshme — paraqit te shofer-i</div>
+            </div>
+            <div class="qrm-info" id="qrmInfo"></div>
+            <div class="qrm-foot">
+                <button class="qrm-btn-p" id="downloadBtn">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"
+                        stroke-linecap="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                        <polyline points="7 10 12 15 17 10" />
+                        <line x1="12" y1="15" x2="12" y2="3" />
+                    </svg>
+                    Shkarko PNG
+                </button>
+                <button class="qrm-btn-s" onclick="closeQR()">Mbyll</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SPLASH -->
+    <div id="splash">
+        <div class="sp-mesh"></div>
+        <div class="sp-dots"></div>
+        <div class="sp-c">
+            <div class="sp-emblem">
+                <svg viewBox="0 0 58 58" fill="none">
+                    <rect x="3" y="14" width="52" height="28" rx="6" fill="white" opacity=".95" />
+                    <rect x="6" y="18" width="13" height="9" rx="2.5" fill="#2563EB" opacity=".45" />
+                    <rect x="24" y="18" width="9" height="9" rx="2.5" fill="#2563EB" opacity=".45" />
+                    <rect x="38" y="18" width="9" height="9" rx="2.5" fill="#2563EB" opacity=".45" />
+                    <rect x="22" y="30" width="7.5" height="7.5" rx="1.5" fill="#2563EB" opacity=".28" />
+                    <rect x="3" y="38" width="52" height="4" rx="2" fill="white" opacity=".2" />
+                    <circle cx="15" cy="47" r="5.5" fill="white" />
+                    <circle cx="15" cy="47" r="2.5" fill="#2563EB" opacity=".55" />
+                    <circle cx="43" cy="47" r="5.5" fill="white" />
+                    <circle cx="43" cy="47" r="2.5" fill="#2563EB" opacity=".55" />
+                </svg>
+            </div>
+            <div class="sp-title">
+                <div class="sp-name">Bus<em>WithUs</em></div>
+                <div class="sp-sub">Transport Urban · Tiranë</div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:.5rem;width:200px">
+                <div class="sp-bar" id="spBar" style="--w:0%"></div>
+                <div class="sp-pct" id="spPct">0%</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AUTH -->
+    <div id="authScreen">
+        <div class="auth-bg">
+            <div class="auth-bg-mesh"></div>
+        </div>
+        <div class="auth-wrap">
+            <div class="auth-logo">
+                <div class="al-ico">
+                    <svg viewBox="0 0 24 24" fill="none">
+                        <rect x="2" y="6" width="20" height="12" rx="2.5" fill="white" opacity=".95" />
+                        <rect x="3.5" y="7.5" width="5.5" height="4" rx="1" fill="#2563EB" opacity=".55" />
+                        <rect x="10.5" y="7.5" width="4" height="4" rx="1" fill="#2563EB" opacity=".55" />
+                        <rect x="15.5" y="7.5" width="4" height="4" rx="1" fill="#2563EB" opacity=".55" />
+                        <circle cx="6.5" cy="18.5" r="2" fill="white" />
+                        <circle cx="6.5" cy="18.5" r=".88" fill="#2563EB" opacity=".65" />
+                        <circle cx="17.5" cy="18.5" r="2" fill="white" />
+                        <circle cx="17.5" cy="18.5" r=".88" fill="#2563EB" opacity=".65" />
+                    </svg>
+                </div>
+                <div class="al-name">Bus<em>WithUs</em></div>
+            </div>
+            <div class="auth-card">
+                <div class="auth-tabs">
+                    <div class="at on" id="tabLogin" onclick="switchTab('login')">Hyr në llogari</div>
+                    <div class="at" id="tabReg" onclick="switchTab('register')">Hap llogari</div>
+                </div>
+                <div class="auth-body">
+                    <div class="a-err" id="authErr"></div>
+                    <div class="afg" id="nameGrp" style="display:none">
+                        <label>Emri i plotë</label>
+                        <input type="text" id="afName" placeholder="p.sh. Arta Kelmendi">
+                    </div>
+                    <div class="afg">
+                        <label>Adresa email</label>
+                        <input type="email" id="afEmail" placeholder="email@shembull.al">
+                    </div>
+                    <div class="afg">
+                        <label>Fjalëkalimi</label>
+                        <input type="password" id="afPass" placeholder="Minimumi 6 karaktere"
+                            onkeydown="if(event.key==='Enter')authSubmit()">
+                    </div>
+                    <button class="a-btn" id="authBtn" onclick="authSubmit()">
+                        <span id="authBtnTxt">Hyr në llogari</span>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"
+                            stroke-linecap="round">
+                            <line x1="5" y1="12" x2="19" y2="12" />
+                            <polyline points="12 5 19 12 12 19" />
+                        </svg>
+                    </button>
+                    <div class="auth-demo" onclick="demoLogin()">Provo me llogari demo →</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TUTORIAL OVERLAY -->
+    <div id="tutOverlay">
+        <div class="tut-card">
+            <div class="tut-prog">
+                <div class="tut-prog-fill" id="tutFill" style="width:20%"></div>
+            </div>
+            <div class="tut-visual">
+                <div class="tut-step-badge" id="tutBadge">01 / 05</div>
+                <div class="tut-v-ico" id="tutIco">🚌</div>
+            </div>
+            <div class="tut-body" id="tutBody">
+                <!-- filled by JS -->
+            </div>
+            <div class="tut-foot">
+                <div class="tut-dots" id="tutDots"></div>
+                <button class="tut-skip" onclick="skipTut()">Kalo →</button>
+                <button class="tut-prev" id="tutPrev" onclick="tutGo(-1)">←</button>
+                <button class="tut-next" id="tutNext" onclick="tutGo(1)">Vazhdo →</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- APP -->
+    <div id="app">
+        <nav id="nav">
+            <div class="nav-brand" onclick="goP('home')">
+                <div class="nav-ico">
+                    <svg viewBox="0 0 24 24" fill="none">
+                        <rect x="2" y="6" width="20" height="12" rx="2.5" fill="white" opacity=".95" />
+                        <rect x="3.5" y="7.5" width="5.5" height="4" rx="1" fill="#2563EB" opacity=".55" />
+                        <rect x="10.5" y="7.5" width="4" height="4" rx="1" fill="#2563EB" opacity=".55" />
+                        <rect x="15.5" y="7.5" width="4" height="4" rx="1" fill="#2563EB" opacity=".55" />
+                        <rect x="9" y="13" width="3" height="3.5" rx=".5" fill="#2563EB" opacity=".35" />
+                        <circle cx="6.5" cy="18.5" r="2" fill="white" />
+                        <circle cx="6.5" cy="18.5" r=".85" fill="#2563EB" opacity=".65" />
+                        <circle cx="17.5" cy="18.5" r="2" fill="white" />
+                        <circle cx="17.5" cy="18.5" r=".85" fill="#2563EB" opacity=".65" />
+                    </svg>
+                </div>
+                <div class="nav-nm">Bus<em>WithUs</em></div>
+            </div>
+            <div class="nav-r">
+                <div class="nav-help" onclick="showTut()" title="Ndihmë & Tutorial">?</div>
+                <div class="nav-av" id="navAv">?</div>
+                <button class="nav-logout" onclick="logout()">Dil</button>
+            </div>
+        </nav>
+
+        <div class="pages">
+
+            <!-- ═══ HOME ═══ -->
+            <div class="pg on" id="pg-home">
+                <div class="home-hero">
+                    <div class="hh-photo"><img src="https://www.cardlangroup.com/u_file/2211/photo/5292d44280.jpg"
+                            alt=""></div>
+                    <div class="hh-mesh"></div>
+                    <div class="hh-c">
+                        <div class="hh-pill">
+                            <div class="live-dot"></div>Transport Publik Urban · Tiranë
+                        </div>
+                        <h1 class="hh-title">Bileta <em>digjitale</em><br>pa radhë, pa cash</h1>
+                        <p class="hh-sub">Bli biletën tënde të autobusit direkt nga telefoni. QR kod i vërtetë dhe i
+                            skanushëm — gati për tu hipë në autobus.</p>
+                    </div>
+                </div>
+
+                <!-- Quick Book -->
+                <div class="qb-wrap">
+                    <div class="qb-head">
+                        <div class="qb-head-ico">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round">
+                                <path
+                                    d="M2 9a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v1a1 1 0 0 1-1 1 1 1 0 0 0 0 2 1 1 0 0 1 1 1v1a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-1a1 1 0 0 1 1-1 1 1 0 0 0 0-2 1 1 0 0 1-1-1V9z" />
+                            </svg>
+                        </div>
+                        <div class="qb-head-t">Bli biletë tani</div>
+                        <div class="qb-head-sub">40 Lekë / biletë</div>
+                    </div>
+                    <div class="qb-type-tabs">
+                        <div class="qb-tt on" onclick="qbTab(this)">Single</div>
+                        <div class="qb-tt" onclick="qbTab(this)">Shumëfish</div>
+                        <div class="qb-tt" onclick="qbTab(this)">Studentore</div>
+                    </div>
+                    <div class="qb-grid">
+                        <div class="qbf"><label>Linja</label><select id="hwLine" onchange="hwCalc()">
+                                <option value="">— Zgjidh linjën —</option>
+                            </select></div>
+                        <div class="qbf"><label>Numri i biletave</label>
+                            <select id="hwQty" onchange="hwCalc()">
+                                <option value="1">1 biletë</option>
+                                <option value="2">2 bileta</option>
+                                <option value="3">3 bileta</option>
+                                <option value="4">4 bileta</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="qb-grid">
+                        <div class="qbf"><label>Emri i plotë</label><input type="text" id="hwName"
+                                placeholder="p.sh. Arta Kelmendi"></div>
+                        <div class="qbf"><label>Data e udhëtimit</label><input type="date" id="hwDate"></div>
+                    </div>
+                    <div class="qb-total hidden" id="hwTotalRow">
+                        <span class="qb-total-lbl">Totali</span>
+                        <span class="qb-total-val" id="hwTotalVal">0 L</span>
+                    </div>
+                    <button class="qb-btn" onclick="hwSubmit()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round">
+                            <path
+                                d="M2 9a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v1a1 1 0 0 1-1 1 1 1 0 0 0 0 2 1 1 0 0 1 1 1v1a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-1a1 1 0 0 1 1-1 1 1 0 0 0 0-2 1 1 0 0 1-1-1V9z" />
+                        </svg>
+                        Gjenero Biletën me QR Kod
+                    </button>
+                </div>
+
+                <!-- Stats -->
+                <div class="stats-strip">
+                    <div class="ss-card" style="--card-glow:rgba(29,78,216,.04)">
+                        <div class="ss-bar" style="background:#1D4ED8"></div>
+                        <div class="ss-n" style="color:#1D4ED8">23</div>
+                        <div class="ss-l">Linja aktive</div>
+                    </div>
+                    <div class="ss-card" style="--card-glow:rgba(5,150,105,.04)">
+                        <div class="ss-bar" style="background:#059669"></div>
+                        <div class="ss-n" style="color:#059669">40<small style="font-size:.7em">L</small></div>
+                        <div class="ss-l">Çmim fiks</div>
+                    </div>
+                    <div class="ss-card" style="--card-glow:rgba(217,119,6,.04)">
+                        <div class="ss-bar" style="background:#D97706"></div>
+                        <div class="ss-n" style="color:#D97706">QR</div>
+                        <div class="ss-l">Verifikim instant</div>
+                    </div>
+                </div>
+
+                <div class="sec-h">
+                    <div class="sec-title">Linjat kryesore <span class="sec-cnt">8</span></div>
+                    <span class="sec-link" onclick="goP('lines')">Shiko të gjitha
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.5" stroke-linecap="round">
+                            <line x1="5" y1="12" x2="19" y2="12" />
+                            <polyline points="12 5 19 12 12 19" />
+                        </svg>
+                    </span>
+                </div>
+                <div class="chips" id="homeChips"></div>
+            </div>
+
+            <!-- ═══ LINES ═══ -->
+            <div class="pg" id="pg-lines">
+                <div class="pg-hero">
+                    <img src="https://images.unsplash.com/photo-1570125909517-53cb21c89ff2?w=1400&q=80" alt="">
+                    <div class="pg-hero-c">
+                        <h2>Linjat <em>Urbane</em></h2>
+                        <p>23 linja zyrtare · Bashkia Tiranë · SUTi 2023</p>
+                    </div>
+                </div>
+                <div class="filter-bar">
+                    <span class="fb-lbl">Filtro:</span>
+                    <button class="fb-btn on" onclick="filterLines('all',this)">Të gjitha (23)</button>
+                    <button class="fb-btn" onclick="filterLines('active',this)">● Aktive</button>
+                    <button class="fb-btn" onclick="filterLines('busy',this)">● Ngarkuara</button>
+                </div>
+                <div class="lines-list" id="linesGrid"></div>
+            </div>
+
+            <!-- ═══ BOOKING ═══ -->
+            <div class="pg" id="pg-booking">
+                <div class="pg-hero">
+                    <img src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=1400&q=80" alt="">
+                    <div class="pg-hero-c">
+                        <h2>Blerja e <em>Biletës</em></h2>
+                        <p>Zgjidh linjën · Plotëso të dhënat · Merr QR kodin</p>
+                    </div>
+                </div>
+                <div class="book-layout">
+                    <div>
+                        <div class="bl-label">Zgjidh linjën tënde (23 disponueshme)</div>
+                        <div class="bl-list" id="bookLines"></div>
+                    </div>
+                    <div class="fcard">
+                        <div class="fcard-hd">
+                            <h3>
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white"
+                                    stroke-width="2" stroke-linecap="round">
+                                    <path
+                                        d="M2 9a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v1a1 1 0 0 1-1 1 1 1 0 0 0 0 2 1 1 0 0 1 1 1v1a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-1a1 1 0 0 1 1-1 1 1 0 0 0 0-2 1 1 0 0 1-1-1V9z" />
+                                </svg>
+                                Detajet e biletës
+                            </h3>
+                            <p>Plotëso fushat dhe gjenero QR kodin</p>
+                        </div>
+                        <div class="fcard-body">
+                            <div class="fcard-sel" id="fcSel" style="display:none">
+                                <div>
+                                    <div class="fs-name" id="fcSelName">—</div>
+                                    <div class="fs-sub" id="fcSelSub"></div>
+                                </div>
+                                <div class="fs-price" id="fcTotalP">40 L</div>
+                            </div>
+                            <div class="fcg"><label>Emri i plotë i udhëtarit</label><input type="text" id="fcName"
+                                    placeholder="p.sh. Arta Kelmendi"></div>
+                            <div class="fcg"><label>Email (opsionale)</label><input type="email" id="fcEmail"
+                                    placeholder="arta@shembull.al"></div>
+                            <div class="fcg-2">
+                                <div class="fcg"><label>Data</label><input type="date" id="fcDate"></div>
+                                <div class="fcg"><label>Ora</label>
+                                    <select id="fcTime">
+                                        <option>06:00</option>
+                                        <option>07:00</option>
+                                        <option>08:00</option>
+                                        <option>09:00</option>
+                                        <option>10:00</option>
+                                        <option>11:00</option>
+                                        <option selected>12:00</option>
+                                        <option>13:00</option>
+                                        <option>14:00</option>
+                                        <option>15:00</option>
+                                        <option>16:00</option>
+                                        <option>17:00</option>
+                                        <option>18:00</option>
+                                        <option>19:00</option>
+                                        <option>20:00</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="fcg"><label>Numri i biletave</label>
+                                <select id="fcQty" onchange="fcCalc()">
+                                    <option value="1">1 biletë — 40 L</option>
+                                    <option value="2">2 bileta — 80 L</option>
+                                    <option value="3">3 bileta — 120 L</option>
+                                    <option value="4">4 bileta — 160 L</option>
+                                </select>
+                            </div>
+                            <div class="fcard-sep"></div>
+                            <div class="total-box">
+                                <div class="tb-lbl">Totali i pagesës</div>
+                                <div class="tb-amt" id="fcTotal">— L</div>
+                            </div>
+                            <button class="fcard-btn" onclick="fcSubmit()">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white"
+                                    stroke-width="2" stroke-linecap="round">
+                                    <path
+                                        d="M2 9a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v1a1 1 0 0 1-1 1 1 1 0 0 0 0 2 1 1 0 0 1 1 1v1a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-1a1 1 0 0 1 1-1 1 1 0 0 0 0-2 1 1 0 0 1-1-1V9z" />
+                                </svg>
+                                Gjenero Biletën me QR
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ═══ MAP ═══ -->
+            <div class="pg" id="pg-map">
+                <div class="map-wrap">
+                    <div class="map-sb">
+                        <div class="map-sbh">
+                            <h3>Harta e Linjave</h3>
+                            <p>Burim: Bashkia Tiranë · SUTi 2023</p>
+                            <a class="map-pdf-btn"
+                                href="https://transformative-mobility.org/wp-content/uploads/2023/05/SUTi_2023_05_04_Tirana_Bus_Map_EN.pdf"
+                                target="_blank">↗ Shkarko PDF Zyrtar</a>
+                        </div>
+                        <div class="map-lines" id="mapList"></div>
+                    </div>
+                    <div class="map-main">
+                        <div class="map-bar">
+                            <div class="mb-ico">📍</div>
+                            <div class="mb-text"><strong>Harta Zyrtare e
+                                    Tiranës</strong><small>transformative-mobility.org · SUTi 2023</small></div>
+                            <a class="mb-link"
+                                href="https://transformative-mobility.org/wp-content/uploads/2023/05/SUTi_2023_05_04_Tirana_Bus_Map_EN.pdf"
+                                target="_blank">PDF ↗</a>
+                        </div>
+                        <iframe
+                            src="https://transformative-mobility.org/wp-content/uploads/2023/05/SUTi_2023_05_04_Tirana_Bus_Map_EN.pdf"
+                            title="Harta e linjave" style="padding-top:58px"></iframe>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ═══ SCAN ═══ -->
+            <div class="pg" id="pg-scan">
+                <div class="scan-wrap">
+                    <div class="scan-card">
+                        <div class="scan-hd">
+                            <div class="scan-hd-ico">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"
+                                    stroke-linecap="round">
+                                    <path d="M23 7V1h-6" />
+                                    <path d="M1 17v6h6" />
+                                    <path d="M23 17v6h-6" />
+                                    <path d="M1 7V1h6" />
+                                    <rect x="7" y="7" width="4" height="4" rx="1" />
+                                    <rect x="13" y="7" width="4" height="4" rx="1" />
+                                    <rect x="7" y="13" width="4" height="4" rx="1" />
+                                    <rect x="13" y="13" width="4" height="4" rx="1" />
+                                </svg>
+                            </div>
+                            <div class="scan-hd-txt">
+                                <strong>Skano biletën QR</strong>
+                                <small>Për shoferë dhe kontrollë biletash</small>
+                            </div>
+                            <button class="scan-toggle" id="scanToggleBtn" onclick="toggleScanner()">▶ Fillo</button>
+                        </div>
+                        <div class="scan-vid-wrap">
+                            <video id="scanVideo" playsinline autoplay muted></video>
+                            <canvas id="scanCanvas"></canvas>
+                            <div class="scan-overlay" id="scanFrame">
+                                <div class="scan-frame-box"></div>
+                                <div class="scan-beam"></div>
+                                <div class="scan-corner tl"></div>
+                                <div class="scan-corner tr"></div>
+                                <div class="scan-corner bl"></div>
+                                <div class="scan-corner br"></div>
+                            </div>
+                            <div class="scan-ph" id="scanPlaceholder">
+                                <div class="scan-ph-icon">
+                                    <svg width="52" height="52" viewBox="0 0 24 24" fill="none"
+                                        stroke="rgba(255,255,255,.25)" stroke-width="1.5" stroke-linecap="round">
+                                        <path d="M23 7V1h-6" />
+                                        <path d="M1 17v6h6" />
+                                        <path d="M23 17v6h-6" />
+                                        <path d="M1 7V1h6" />
+                                        <rect x="7" y="7" width="4" height="4" rx="1" />
+                                        <rect x="13" y="7" width="4" height="4" rx="1" />
+                                        <rect x="7" y="13" width="4" height="4" rx="1" />
+                                        <rect x="13" y="13" width="4" height="4" rx="1" />
+                                    </svg>
+                                </div>
+                                <div class="scan-ph-txt">Kliko butonin <strong style="color:rgba(255,255,255,.6)">"▶
+                                        Fillo"</strong> për të aktivizuar kamerën dhe skanuar biletën</div>
+                            </div>
+                        </div>
+                        <div class="scan-status" id="scanStatus">
+                            <span>⏳</span> Duke pritur fillimin e skanimit...
+                        </div>
+                    </div>
+
+                    <div class="scan-result" id="scanResult">
+                        <div class="res-ok" id="resultValid">
+                            <div class="res-hd ok">
+                                <div class="res-icon">✅</div>
+                                <div>
+                                    <div class="res-title">Biletë e Vlefshme</div>
+                                    <div class="res-sub">Udhëtari lejohet të hipë</div>
+                                </div>
+                            </div>
+                            <div class="res-info" id="resultInfo"></div>
+                            <div class="res-acts"><button class="res-btn primary" onclick="resetScanner()">Skano biletë
+                                    tjetër</button></div>
+                        </div>
+                        <div class="res-fail" id="resultInvalid">
+                            <div class="res-hd fail">
+                                <div class="res-icon">❌</div>
+                                <div>
+                                    <div class="res-title">Biletë e Pavlefshme</div>
+                                    <div class="res-sub">QR kodi nuk njihet</div>
+                                </div>
+                            </div>
+                            <div class="res-info"
+                                style="padding:1rem 1.4rem;font-size:.83rem;color:var(--muted);line-height:1.75">Kjo
+                                biletë nuk u gjet ose është e skaduar. Kontrollo me ID manualisht ose kërko biletën
+                                origjinale tek udhëtari.</div>
+                            <div class="res-acts"><button class="res-btn secondary" onclick="resetScanner()">↩ Provo
+                                    sërish</button></div>
+                        </div>
+                    </div>
+
+                    <div class="manual-card">
+                        <div class="manual-lbl">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round">
+                                <circle cx="11" cy="11" r="8" />
+                                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                            </svg>
+                            Verifikim manual me ID bilete
+                        </div>
+                        <div class="manual-row">
+                            <input type="text" class="manual-in" id="manualId" placeholder="p.sh. TRN-A4B2C8D1"
+                                onkeydown="if(event.key==='Enter')manualVerify()">
+                            <button class="manual-btn" onclick="manualVerify()">Verifiko</button>
+                        </div>
+                        <div id="manualResult"></div>
+                    </div>
+                </div>
+            </div>
+
+        </div><!-- /pages -->
+
+        <div class="tabbar">
+            <div class="tab on" id="tab-home" onclick="goP('home')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                    <polyline points="9 22 9 12 15 12 15 22" />
+                </svg>
+                <div class="tab-lbl">Shtëpia</div>
+            </div>
+            <div class="tab" id="tab-lines" onclick="goP('lines')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <rect x="1" y="3" width="15" height="13" rx="2" />
+                    <path d="M16 8h4l3 3v5h-7V8z" />
+                    <circle cx="5.5" cy="18.5" r="2.5" />
+                    <circle cx="18.5" cy="18.5" r="2.5" />
+                </svg>
+                <div class="tab-lbl">Linjat</div>
+            </div>
+            <div class="tab" id="tab-booking" onclick="goP('booking')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                    <path
+                        d="M2 9a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v1a1 1 0 0 1-1 1 1 1 0 0 0 0 2 1 1 0 0 1 1 1v1a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-1a1 1 0 0 1 1-1 1 1 0 0 0 0-2 1 1 0 0 1-1-1V9z" />
+                </svg>
+                <div class="tab-lbl">Bileta</div>
+            </div>
+            <div class="tab" id="tab-map" onclick="goP('map')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6" />
+                    <line x1="8" y1="2" x2="8" y2="18" />
+                    <line x1="16" y1="6" x2="16" y2="22" />
+                </svg>
+                <div class="tab-lbl">Harta</div>
+            </div>
+            <div class="tab" id="tab-scan" onclick="goP('scan')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                    <path d="M23 7V1h-6" />
+                    <path d="M1 17v6h6" />
+                    <path d="M23 17v6h-6" />
+                    <path d="M1 7V1h6" />
+                    <rect x="7" y="7" width="4" height="4" rx="1" />
+                    <rect x="13" y="7" width="4" height="4" rx="1" />
+                    <rect x="7" y="13" width="4" height="4" rx="1" />
+                    <rect x="13" y="13" width="4" height="4" rx="1" />
+                </svg>
+                <div class="tab-lbl">Skanim</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FIREBASE -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.min.js"></script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        const fc = { apiKey: "AIzaSyDYqsgsGG4_ziMrfK0seVkPnBOB_UKRTAY", authDomain: "buswithus-a19e9.firebaseapp.com", projectId: "buswithus-a19e9", storageBucket: "buswithus-a19e9.firebasestorage.app", messagingSenderId: "676266111534", appId: "1:676266111534:web:4be67e02411d5079e3e5bf" };
+        try {
+            const a = initializeApp(fc), auth = getAuth(a);
+            window._fbOk = true;
+            window._createUser = (e, pw) => createUserWithEmailAndPassword(auth, e, pw);
+            window._signIn = (e, pw) => signInWithEmailAndPassword(auth, e, pw);
+            window._signOut = () => signOut(auth);
+            window._updProf = (u, d) => updateProfile(u, d);
+            onAuthStateChanged(auth, u => { window._cu = u; window._authChecked = true; if (window._splashDone) { u ? onUserReady(u) : showAuth(); } else if (window._splashWaiting) { doneSplash(); } });
+        } catch (e) { window._fbOk = false; }
+    </script>
+
+    <script>
+        // ════ DATA ════
+        const LINES = [
+            { id: '1A', name: 'Linja 1A', route: 'Allias → Selitë', stops: 'Allias · Kodra e Diellit · Sheshi Skënderbej · Selitë', color: '#DC2626', status: 'active' },
+            { id: '1B', name: 'Linja 1B', route: 'Allias → Kodra e Diellit 2', stops: 'Allias · Rrethrrotullimi · Kodra e Diellit 2', color: '#EF4444', status: 'active' },
+            { id: '2', name: 'Linja 2', route: 'TEG → Ish Stacioni i Trenit', stops: 'TEG · Kopështi Zoologjik · Sheshi Skënderbej · Stacioni Trenit', color: '#EA580C', status: 'busy' },
+            { id: '3A', name: 'Linja 3A', route: 'Astir → Qendra', stops: 'Astir · Kinostudio · Barrikadat · Sheshi Skënderbej', color: '#D97706', status: 'active' },
+            { id: '3B', name: 'Linja 3B', route: 'Yrshek → Qendra', stops: 'Yrshek · Radio DPM · Mbikalimi · Sheshi Skënderbej', color: '#F59E0B', status: 'active' },
+            { id: '4', name: 'Linja 4', route: 'Qendër → City Park', stops: 'Sheshi Skënderbej · Rruga Kavajës · Kthesa Yzberisht · City Park', color: '#16A34A', status: 'active' },
+            { id: '5A', name: 'Linja 5A', route: 'Kombinati → Qendër', stops: 'Kombinati · Selvia · Barrikadat · Sheshi Skënderbej', color: '#1D4ED8', status: 'busy' },
+            { id: '5B', name: 'Linja 5B', route: 'Institut → Qendër', stops: 'Instituti · Mjekësia · QSUT · Sheshi Skënderbej', color: '#2563EB', status: 'active' },
+            { id: '6', name: 'Linja 6', route: 'Laprakë → Qendër', stops: 'Laprakë · Aleks Buda · Don Bosko · Sheshi Skënderbej', color: '#7C3AED', status: 'active' },
+            { id: '8A', name: 'Linja 8A', route: 'Qendër → TEG', stops: 'Sheshi Skënderbej · Ali Demi · Sheshi Shqiponja · TEG', color: '#92400E', status: 'busy' },
+            { id: '8B', name: 'Linja 8B', route: 'Qendër → Sanatoriumi', stops: 'Sheshi Skënderbej · Sanatoriumi · Shefqet Ndroqi', color: '#B45309', status: 'active' },
+            { id: '8C', name: 'Linja 8C', route: 'Qendër → Sauk i Vjetër', stops: 'Sheshi Skënderbej · Panorama Liqenit · Sauk i Vjetër', color: '#CA8A04', status: 'active' },
+            { id: '9A', name: 'Linja 9A', route: 'Qytet Studenti → Jordan Misja', stops: 'Qyteti Studenti · Rektorati · Libri Universitar · Jordan Misja', color: '#0F766E', status: 'active' },
+            { id: '9B', name: 'Linja 9B', route: 'Vilat Gjermane → Jordan Misja', stops: 'Vilat Gjermane · Haki Shehu · Fiologjiku · Jordan Misja', color: '#0D9488', status: 'active' },
+            { id: '10A', name: 'Linja 10A', route: 'Qendër → Mihal Grameno (A)', stops: 'Sheshi Skënderbej · Njësia 2 · Mihal Grameno', color: '#B91C1C', status: 'active' },
+            { id: '10B', name: 'Linja 10B', route: 'Qendër → Mihal Grameno (B)', stops: 'Sheshi Skënderbej · Tregu Elektrik · Mihal Grameno', color: '#DC2626', status: 'busy' },
+            { id: '10C', name: 'Linja 10C', route: 'Shkozë → Fusha Aviacionit', stops: 'Rrethrrotullimi Shkozë · Fusha Aviacionit · Helikopteret', color: '#F87171', status: 'active' },
+            { id: '11', name: 'Linja 11', route: 'Porcelani → Qendër', stops: 'Porcelani · Nënstacioni Elektrik · Fresku · Sheshi Skënderbej', color: '#1E3A5F', status: 'active' },
+            { id: '12', name: 'Linja 12', route: 'Uzina Dinamo → Sharrë', stops: 'Uzina Dinamo · Stadiumi Dinamo · Varrezat Sharrë · Kthesa Sharrë', color: '#166534', status: 'active' },
+            { id: '13', name: 'Linja 13', route: 'Tirana e Re → Qendër', stops: 'Tirana e Re · Komuna Parisit · Prokop Mima · Sheshi Skënderbej', color: '#6D28D9', status: 'active' },
+            { id: '15A', name: 'Linja 15A', route: 'Kombinat → Kinostudio', stops: 'Kombinat · Selvia · Barrikadat · Kinostudio', color: '#92400E', status: 'active' },
+            { id: '15B', name: 'Linja 15B — e Gjelbër', route: 'Kombinat → Tufinë', stops: 'Kombinat · Mapo · UKT · Varrezat Tufinë · Siri Kodra', color: '#15803D', status: 'active' },
+            { id: '16', name: 'Linja 16', route: 'Materniteti i Ri → Qendër', stops: 'Materniteti i Ri · PTUU · Odhise Grillo · Sheshi Skënderbej', color: '#9A3412', status: 'active' },
+        ];
+
+        // ════ TUTORIAL DATA ════
+        const TUT = [
+            {
+                ico: '👋', tag: 'Mirë se vini',
+                title: 'Mirë se vini në <mark>BusWithUs</mark>',
+                desc: 'Platforma e parë shqiptare për bileta digjitale të autobusit urban të Tiranës. Kjo udhëzues i shkurtër do t\'ju tregojë si funksionon gjithçka.',
+                tips: [
+                    { bg: '#EFF6FF', ico: '🎫', title: 'Biletë digjitale', txt: 'Blini biletën direkt nga telefoni, pa para cash dhe pa radhë.' },
+                    { bg: '#F0FDF4', ico: '📱', title: 'QR kod real', txt: 'Merrni një QR kod të vërtetë që skanoj shofer-i direkt.' },
+                    { bg: '#FFFBEB', ico: '⚡', title: '30 sekonda', txt: 'E gjithë procesi zgjat vetëm rreth 30 sekonda.' },
+                ],
+                next: 'Vazhdo →'
+            },
+            {
+                ico: '🗺', tag: 'Hapi 1 — Linjat',
+                title: 'Gjeni <mark>linjën</mark> tuaj',
+                desc: 'Shkoni te skeda "Linjat" për të parë të 23 linjat zyrtare. Klikoni mbi çdo linjë për të filluar blerjen menjëherë.',
+                tips: [
+                    { bg: '#EFF6FF', ico: '🔍', title: 'Si të filtrohet', txt: 'Përdorni butonat "Aktive" ose "Ngarkuara" për të filtruar linjat.' },
+                    { bg: '#F0FDF4', ico: '📍', title: 'Harta zyrtare', txt: 'Skeda "Harta" shfaq hartën PDF zyrtare të Bashkisë Tiranë.' },
+                    { bg: '#FFFBEB', ico: '💡', title: 'Tip i dobishëm', txt: 'Mund të blini biletën edhe direkt nga faqja kryesore — skedari i shpejtë.' },
+                ],
+                next: 'Vazhdo →'
+            },
+            {
+                ico: '📋', tag: 'Hapi 2 — Plotëso',
+                title: 'Plotëso <mark>të dhënat</mark>',
+                desc: 'Pas zgjedhjes së linjës, plotësoni formularin me emrin tuaj, datën dhe numrin e biletave. Çmimi llogaritet automatikisht.',
+                tips: [
+                    { bg: '#EFF6FF', ico: '👤', title: 'Emri i plotë', txt: 'Shënoni emrin tuaj real — ai do të shfaqet mbi biletë.' },
+                    { bg: '#F0FDF4', ico: '📅', title: 'Data dhe ora', txt: 'Zgjidhni datën dhe orën e preferuar të udhëtimit.' },
+                    { bg: '#FFFBEB', ico: '🔢', title: 'Deri 4 bileta', txt: 'Mund të blini deri në 4 bileta brenda një porosie të vetme.' },
+                ],
+                next: 'Vazhdo →'
+            },
+            {
+                ico: '📲', tag: 'Hapi 3 — QR Kodi',
+                title: 'Merr <mark>QR kodin</mark> tënd',
+                desc: 'Pas plotësimit, klikoni "Gjenero Biletën". Shfaqet QR kodi unik i biletës suaj — mund ta shkarkoni si imazh PNG.',
+                tips: [
+                    { bg: '#EFF6FF', ico: '⬇', title: 'Shkarko si PNG', txt: 'Klikoni "Shkarko PNG" për të ruajtur biletën në galeri.' },
+                    { bg: '#F0FDF4', ico: '🔐', title: 'ID unike', txt: 'Çdo biletë ka ID unike si p.sh. TRN-A4B2C8D1.' },
+                    { bg: '#FFFBEB', ico: '📶', title: 'Pa internet', txt: 'Pasi e keni shkarkuar, bileta funksionon edhe pa internet.' },
+                ],
+                next: 'Vazhdo →'
+            },
+            {
+                ico: '🚌', tag: 'Hapi 4 — Udhëtimi',
+                title: 'Paraqit biletën te <mark>shofer-i</mark>',
+                desc: 'Kur hipni në autobus, hapni biletën ose imazhin e shkarkuar dhe paraqisni QR kodin te shofer-i. Ai e skanon dhe ju jeni gati!',
+                tips: [
+                    { bg: '#EFF6FF', ico: '💡', title: 'Ruaje pa internet', txt: 'Shkarkoni biletën si PNG para nisjes, kjo siguron akses edhe pa sinjal.' },
+                    { bg: '#F0FDF4', ico: '🔍', title: 'Verifikim i shoferit', txt: 'Shofer-i përdor skedën "Skanim" ose ID manuale për verifikim.' },
+                    { bg: '#FFFBEB', ico: '❓', title: 'Ndihmë gjithmonë', txt: 'Klikoni butonin "?" në krye të ekranit për të hapur këtë udhëzues sërish.' },
+                ],
+                next: '🚀 Filloni tani!'
+            },
+        ];
+
+        // ════ SPLASH ════
+        window._splashDone = false; window._authChecked = false;
+        let pct = 0;
+        const sBar = document.getElementById('spBar'), sPct = document.getElementById('spPct');
+        const si = setInterval(() => {
+            pct += Math.random() * 12 + 2;
+            if (pct >= 100) { pct = 100; clearInterval(si); tryFinish(); }
+            sBar.style.setProperty('--w', pct + '%');
+            sPct.textContent = Math.round(pct) + '%';
+        }, 75);
+        function tryFinish() { if (!window._authChecked) { window._splashWaiting = true; setTimeout(() => { if (window._splashWaiting) doneSplash(); }, 2500); } else doneSplash(); }
+        function doneSplash() {
+            window._splashWaiting = false;
+            const sp = document.getElementById('splash');
+            sp.classList.add('out');
+            window._splashDone = true;
+            setTimeout(() => { sp.style.display = 'none'; window._cu ? onUserReady(window._cu) : showAuth(); }, 700);
+        }
+
+        // ════ AUTH ════
+        let authMode = 'login';
+        function showAuth() { document.getElementById('authScreen').classList.add('active'); document.body.style.overflow = 'auto'; }
+        function hideAuth() { document.getElementById('authScreen').classList.remove('active'); document.body.style.overflow = 'hidden'; }
+        function switchTab(m) {
+            authMode = m;
+            document.getElementById('tabLogin').classList.toggle('on', m === 'login');
+            document.getElementById('tabReg').classList.toggle('on', m === 'register');
+            document.getElementById('nameGrp').style.display = m === 'register' ? 'block' : 'none';
+            document.getElementById('authBtnTxt').textContent = m === 'login' ? 'Hyr në llogari' : 'Hap llogarinë';
+            document.getElementById('authErr').classList.remove('on');
+        }
+        function showAuthErr(msg) { const e = document.getElementById('authErr'); e.textContent = msg; e.classList.add('on'); }
+        async function authSubmit() {
+            const email = document.getElementById('afEmail').value.trim(), pass = document.getElementById('afPass').value, name = document.getElementById('afName').value.trim();
+            document.getElementById('authErr').classList.remove('on');
+            if (!email || !pass) { showAuthErr('Ju lutem plotësoni email dhe fjalëkalimin.'); return; }
+            const btn = document.getElementById('authBtn'), txt = document.getElementById('authBtnTxt');
+            txt.textContent = '⏳ Duke u ngarkuar...'; btn.disabled = true;
+            if (!window._fbOk) {
+                const u = { email, displayName: name || email.split('@')[0], uid: 'demo-' + Date.now() };
+                window._cu = u; onUserReady(u); txt.textContent = authMode === 'login' ? 'Hyr në llogari' : 'Hap llogarinë'; btn.disabled = false; return;
+            }
+            try {
+                if (authMode === 'login') { const c = await window._signIn(email, pass); onUserReady(c.user); }
+                else {
+                    if (pass.length < 6) { showAuthErr('Fjalëkalimi duhet të ketë të paktën 6 karaktere.'); txt.textContent = 'Hap llogarinë'; btn.disabled = false; return; }
+                    const c = await window._createUser(email, pass);
+                    if (name) { await window._updProf(c.user, { displayName: name }); c.user.displayName = name; }
+                    onUserReady(c.user);
+                }
+            } catch (e) {
+                const msgs = { 'auth/user-not-found': 'Llogaria nuk u gjet. Provoni të regjistroheni.', 'auth/wrong-password': 'Fjalëkalimi është i gabuar.', 'auth/email-already-in-use': 'Kjo email është tashmë e regjistruar.', 'auth/invalid-credential': 'Email ose fjalëkalim i gabuar.', 'auth/invalid-email': 'Adresa email nuk është e vlefshme.' };
+                showAuthErr(msgs[e.code] || 'Ndodhi një gabim. Provoni sërish.');
+            } finally { txt.textContent = authMode === 'login' ? 'Hyr në llogari' : 'Hap llogarinë'; btn.disabled = false; }
+        }
+        function demoLogin() {
+            const u = { email: 'demo@buswithus.al', displayName: 'Udhëtar Demo', uid: 'demo-user' };
+            window._cu = u; onUserReady(u);
+        }
+        async function logout() {
+            if (window._fbOk) try { await window._signOut(); } catch (e) { }
+            window._cu = null;
+            document.getElementById('app').classList.remove('active');
+            showAuth();
+        }
+
+        // ════ TUTORIAL ════
+        let tutStep = 0;
+        function showTut() {
+            document.getElementById('tutOverlay').classList.add('on');
+            tutStep = 0; renderTut();
+        }
+        function skipTut() {
+            document.getElementById('tutOverlay').classList.remove('on');
+            if (window._cu) localStorage.setItem('bwu-tut-' + (window._cu.uid || 'demo'), '1');
+        }
+        function tutGo(d) {
+            if (d === 1 && tutStep < TUT.length - 1) { tutStep++; renderTut(); }
+            else if (d === 1) { skipTut(); }
+            else if (d === -1 && tutStep > 0) { tutStep--; renderTut(); }
+        }
+        function renderTut() {
+            const s = TUT[tutStep];
+            const pct = ((tutStep + 1) / TUT.length) * 100;
+            document.getElementById('tutFill').style.width = pct + '%';
+            document.getElementById('tutBadge').textContent = String(tutStep + 1).padStart(2, '0') + ' / ' + String(TUT.length).padStart(2, '0');
+            document.getElementById('tutIco').textContent = s.ico;
+            document.getElementById('tutNext').textContent = s.next;
+            document.getElementById('tutPrev').style.display = tutStep === 0 ? 'none' : 'block';
+            document.getElementById('tutDots').innerHTML = TUT.map((_, i) => `<div class="tut-dot ${i === tutStep ? 'on' : ''}" onclick="tutGo(${i - tutStep})"></div>`).join('');
+            document.getElementById('tutBody').innerHTML = `
+    <div class="tut-tag">${s.tag}</div>
+    <h3>${s.title}</h3>
+    <p>${s.desc}</p>
+    <div class="tut-tips">${s.tips.map(t => `<div class="tut-tip"><div class="tut-tip-ico" style="background:${t.bg}">${t.ico}</div><div class="tut-tip-txt"><strong>${t.title}</strong>${t.txt}</div></div>`).join('')}</div>`;
+        }
+
+        // ════ USER READY ════
+        function onUserReady(user) {
+            hideAuth();
+            const name = user.displayName || user.email?.split('@')[0] || 'Udhëtar';
+            document.getElementById('navAv').textContent = name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+            const uid = user.uid || 'demo';
+            if (!localStorage.getItem('bwu-tut-' + uid)) {
+                showTut();
+                localStorage.setItem('bwu-tut-' + uid, '1');
+            } else {
+                showApp();
+            }
+        }
+        function showApp() {
+            document.getElementById('tutOverlay').classList.remove('on');
+            document.getElementById('app').classList.add('active');
+            document.body.style.overflow = 'hidden';
+            renderAll();
+        }
+
+        // ════ RENDER ALL ════
+        function renderAll() {
+            const fi = [3, 5, 0, 8, 4, 1, 6, 11];
+            document.getElementById('homeChips').innerHTML = fi.map(i => { const l = LINES[i]; return `<div class="chip" onclick="goBook('${l.id}')" style="--chip-c:${l.color}"><div class="chip-num" style="background:${l.color}">${l.id}</div><div class="chip-name">${l.name}</div><div class="chip-route">${l.route}</div><div class="chip-price">40 L <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div></div>`; }).join('');
+            document.getElementById('hwLine').innerHTML = '<option value="">— Zgjidh linjën —</option>' + LINES.map(l => `<option value="${l.id}">${l.id} — ${l.route}</option>`).join('');
+            renderLines('all');
+            document.getElementById('bookLines').innerHTML = LINES.map(l => `<div class="blr" id="blr-${l.id}" onclick="pickLine('${l.id}')"><div class="blr-num" style="background:${l.color}">${l.id}</div><div class="blr-info"><h4>${l.name}</h4><div class="blr-stops">${l.stops}</div></div><div class="blr-price">40<small>Lekë</small></div></div>`).join('');
+            document.getElementById('mapList').innerHTML = LINES.map(l => `<div class="ml-row"><div class="ml-badge" style="background:${l.color}">${l.id}</div><div><div class="ml-name">${l.name}</div><div class="ml-route">${l.route}</div></div></div>`).join('');
+            const tom = new Date(); tom.setDate(tom.getDate() + 1); const ds = tom.toISOString().split('T')[0];
+            ['hwDate', 'fcDate'].forEach(id => { const e = document.getElementById(id); if (e) { e.value = ds; e.min = new Date().toISOString().split('T')[0]; } });
+        }
+        function renderLines(f) {
+            document.getElementById('linesGrid').innerHTML = (f === 'all' ? LINES : LINES.filter(l => l.status === f)).map(l => `<div class="lr" onclick="goBook('${l.id}')"><div class="lr-num" style="background:${l.color}">${l.id}</div><div class="lr-info"><h4>${l.name}</h4><div class="lr-route">${l.route}</div><div class="lr-stops">${l.stops}</div></div><div class="lr-r"><div class="lr-price">40<small>Lekë</small></div><div class="badge ${l.status === 'active' ? 'badge-on' : 'badge-busy'}">${l.status === 'active' ? '● Aktive' : '● Ngarkuar'}</div></div></div>`).join('');
+        }
+        function filterLines(f, btn) { document.querySelectorAll('.fb-btn').forEach(b => b.classList.remove('on')); btn.classList.add('on'); renderLines(f); }
+
+        // ════ BOOKING ════
+        let selLine = null;
+        function pickLine(id) {
+            selLine = LINES.find(l => l.id === id);
+            document.querySelectorAll('.blr').forEach(el => el.classList.remove('sel'));
+            document.getElementById('blr-' + id)?.classList.add('sel');
+            document.getElementById('fcSel').style.display = 'flex';
+            document.getElementById('fcSelName').textContent = selLine.name;
+            document.getElementById('fcSelSub').textContent = selLine.route;
+            fcCalc();
+        }
+        function fcCalc() {
+            if (!selLine) { document.getElementById('fcTotal').textContent = '— L'; return; }
+            const q = parseInt(document.getElementById('fcQty').value), t = 40 * q;
+            document.getElementById('fcTotal').textContent = t + ' L';
+            document.getElementById('fcTotalP').textContent = t + ' L';
+        }
+
+        // ════ NAVIGATION ════
+        function goP(id) {
+            document.querySelectorAll('.pg').forEach(p => p.classList.remove('on'));
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
+            document.getElementById('pg-' + id)?.classList.add('on');
+            document.getElementById('tab-' + id)?.classList.add('on');
+        }
+        function goBook(lid) {
+            goP('booking');
+            setTimeout(() => {
+                pickLine(lid);
+                document.getElementById('blr-' + lid)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 200);
+        }
+
+        function hwCalc() {
+            const l = document.getElementById('hwLine').value, q = parseInt(document.getElementById('hwQty').value);
+            const row = document.getElementById('hwTotalRow');
+            if (l && q) { row.classList.remove('hidden'); document.getElementById('hwTotalVal').textContent = (40 * q) + ' Lekë'; }
+            else { row.classList.add('hidden'); }
+        }
+        function hwSubmit() {
+            const name = document.getElementById('hwName').value.trim(), lid = document.getElementById('hwLine').value, date = document.getElementById('hwDate').value, qty = parseInt(document.getElementById('hwQty').value);
+            if (!lid) { showToast('⚠ Zgjidhni linjën'); return; }
+            if (!name) { showToast('⚠ Shkruani emrin tuaj'); return; }
+            if (!date) { showToast('⚠ Zgjidhni datën'); return; }
+            genQR(name, LINES.find(l => l.id === lid), date, '12:00', qty);
+        }
+        function fcSubmit() {
+            if (!selLine) { showToast('⚠ Zgjidhni linjën nga lista'); return; }
+            const name = document.getElementById('fcName').value.trim(), date = document.getElementById('fcDate').value, time = document.getElementById('fcTime').value, qty = parseInt(document.getElementById('fcQty').value);
+            if (!name) { showToast('⚠ Vendosni emrin tuaj'); return; }
+            if (!date) { showToast('⚠ Zgjidhni datën'); return; }
+            genQR(name, selLine, date, time, qty);
+        }
+        function qbTab(el) { document.querySelectorAll('.qb-tt').forEach(t => t.classList.remove('on')); el.classList.add('on'); }
+
+        // ════ QR GENERATION ════
+        let CT = null;
+        function genQR(name, line, date, time, qty) {
+            const tid = 'TRN-' + Math.random().toString(36).substr(2, 8).toUpperCase();
+            const total = 40 * qty;
+            const df = new Date(date).toLocaleDateString('sq-AL', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+            const tickets = JSON.parse(localStorage.getItem('bwu-tickets') || '{}');
+            tickets[tid] = { name, lineId: line.id, lineName: line.name, route: line.route, date, time, qty, total, ts: Date.now() };
+            localStorage.setItem('bwu-tickets', JSON.stringify(tickets));
+            CT = { tid, name, line, date, time, qty, total, df };
+            document.getElementById('qrmLineName').textContent = line.name + ' · ' + line.route;
+            const qb = document.getElementById('qrCanvas'); qb.innerHTML = '';
+            new QRCode(qb, { text: `${tid}|${name}|${line.id}|${date}|${time}|${total}L`, width: 144, height: 144, colorDark: '#0F172A', colorLight: '#FFFFFF', correctLevel: QRCode.CorrectLevel.H });
+            document.getElementById('qrmInfo').innerHTML = `
+    <div class="qi"><div class="qi-l">Udhëtari</div><div class="qi-v">${name}</div></div>
+    <div class="qi"><div class="qi-l">Linja</div><div class="qi-v">${line.name}</div></div>
+    <div class="qi"><div class="qi-l">Rruga</div><div class="qi-v">${line.route}</div></div>
+    <div class="qi"><div class="qi-l">Data & Ora</div><div class="qi-v">${df}, ${time}</div></div>
+    <div class="qi"><div class="qi-l">Bileta</div><div class="qi-v">${qty}×</div></div>
+    <div class="qi"><div class="qi-l">Totali</div><div class="qi-v total">${total} Lekë</div></div>
+    <div class="qi"><div class="qi-l">ID Biletës</div><div class="qi-v id">${tid}</div></div>`;
+            document.getElementById('qrOv').classList.add('on');
+            document.getElementById('downloadBtn').onclick = downloadTicket;
+        }
+        function downloadTicket() {
+            if (!CT) return;
+            const { tid, name, line, df, time, qty, total } = CT;
+            const c = document.createElement('canvas'), dpr = 2;
+            c.width = 400 * dpr; c.height = 640 * dpr;
+            const ctx = c.getContext('2d'); ctx.scale(dpr, dpr);
+            // BG dark gradient
+            const gBg = ctx.createLinearGradient(0, 0, 400, 0); gBg.addColorStop(0, '#060B18'); gBg.addColorStop(1, '#1E293B');
+            ctx.fillStyle = gBg; ctx.beginPath(); rr(ctx, 0, 0, 400, 640, 16); ctx.fill();
+            // Header area
+            ctx.fillStyle = '#0F172A'; ctx.beginPath(); rr(ctx, 0, 0, 400, 108, 16); ctx.fill();
+            ctx.fillStyle = '#0F172A'; ctx.fillRect(0, 94, 400, 14);
+            // Brand badge
+            ctx.fillStyle = '#1D4ED8'; ctx.beginPath(); rr(ctx, 20, 20, 42, 42, 12); ctx.fill();
+            // Bus icon simple
+            ctx.fillStyle = '#fff'; ctx.font = '22px sans-serif'; ctx.textBaseline = 'middle'; ctx.textAlign = 'center'; ctx.fillText('🚌', 41, 41);
+            // Brand name
+            ctx.fillStyle = '#fff'; ctx.font = 'bold 18px "Bricolage Grotesque",sans-serif'; ctx.textAlign = 'left'; ctx.textBaseline = 'middle'; ctx.fillText('BusWithUs', 72, 41);
+            // Tag
+            ctx.fillStyle = 'rgba(255,255,255,.22)'; ctx.font = '7.5px sans-serif'; ctx.textBaseline = 'alphabetic'; ctx.fillText('BILETË DIGJITALE  ·  TIRANË', 20, 74);
+            // Line name
+            ctx.fillStyle = 'rgba(255,255,255,.65)'; ctx.font = 'bold 11.5px sans-serif'; ctx.fillText(line.name + ' — ' + line.route, 20, 94);
+            // Perf dots
+            for (let x = 16; x < 392; x += 18) { ctx.fillStyle = '#060B18'; ctx.beginPath(); ctx.arc(x, 108, 6, 0, Math.PI * 2); ctx.fill(); }
+            // QR area
+            ctx.fillStyle = 'rgba(255,255,255,.04)'; ctx.beginPath(); rr(ctx, 10, 116, 380, 164, 12); ctx.fill();
+            const qrEl = document.querySelector('#qrCanvas canvas') || document.querySelector('#qrCanvas img');
+            if (qrEl) { ctx.fillStyle = '#fff'; ctx.beginPath(); rr(ctx, 128, 124, 144, 144, 12); ctx.fill(); ctx.drawImage(qrEl, 134, 130, 132, 132); }
+            // Valid badge
+            ctx.fillStyle = '#059669'; ctx.beginPath(); rr(ctx, 138, 276, 124, 22, 11); ctx.fill();
+            ctx.fillStyle = '#fff'; ctx.font = 'bold 9px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('✓  Biletë e Vlefshme', 200, 287);
+            // Info rows
+            const rows = [['UDHËTARI', name], ['LINJA', line.id + ' — ' + line.route], ['DATA & ORA', df + ', ' + time], ['BILETA', qty + '  biletë(a)  ·  ' + total + ' Lekë'], ['ID BILETËS', tid]];
+            let y = 312; ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+            rows.forEach(([lbl, val]) => {
+                ctx.fillStyle = 'rgba(255,255,255,.25)'; ctx.font = '7px sans-serif'; ctx.fillText(lbl, 24, y);
+                ctx.fillStyle = '#fff'; ctx.font = 'bold 11.5px sans-serif'; ctx.fillText(val, 24, y + 16);
+                y += 40; ctx.strokeStyle = 'rgba(255,255,255,.06)'; ctx.lineWidth = 1;
+                ctx.beginPath(); ctx.moveTo(20, y - 6); ctx.lineTo(380, y - 6); ctx.stroke();
+            });
+            ctx.fillStyle = 'rgba(255,255,255,.14)'; ctx.font = '8px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
+            ctx.fillText('buswithus.al  ·  Transport Urban  ·  Tiranë  ·  ' + new Date().getFullYear(), 200, 628);
+            const link = document.createElement('a'); link.download = `Bilete-BusWithUs-${tid}.png`; link.href = c.toDataURL('image/png'); link.click();
+            showToast('✓ Bileta u shkarkua si PNG!');
+        }
+        function rr(ctx, x, y, w, h, r) { ctx.beginPath(); ctx.moveTo(x + r, y); ctx.lineTo(x + w - r, y); ctx.quadraticCurveTo(x + w, y, x + w, y + r); ctx.lineTo(x + w, y + h - r); ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h); ctx.lineTo(x + r, y + h); ctx.quadraticCurveTo(x, y + h, x, y + h - r); ctx.lineTo(x, y + r); ctx.quadraticCurveTo(x, y, x + r, y); ctx.closePath(); }
+        function closeQR() { document.getElementById('qrOv').classList.remove('on'); }
+        document.getElementById('qrOv').addEventListener('click', e => { if (e.target === document.getElementById('qrOv')) closeQR(); });
+
+        // ════ TOAST ════
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            document.getElementById('toastMsg').textContent = msg;
+            t.classList.add('on');
+            setTimeout(() => t.classList.remove('on'), 3400);
+        }
+
+        // ════ SCANNER ════
+        let scanStream = null, scanInterval = null, scanning = false;
+
+        async function toggleScanner() {
+            if (scanning) { stopScanner(); return; }
+            try {
+                scanStream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: { ideal: 'environment' } },
+                    audio: false
+                });
+                const v = document.getElementById('scanVideo');
+                v.srcObject = scanStream;
+                v.style.display = 'block';
+                document.getElementById('scanFrame').style.display = 'block';
+                document.getElementById('scanPlaceholder').style.display = 'none';
+                document.getElementById('scanToggleBtn').textContent = '⏹ Ndalo';
+                document.getElementById('scanStatus').innerHTML =
+                    '<span style="color:var(--green-lt)">●</span> Kamera aktive — drejtoje te QR kodi';
+                scanning = true;
+
+                v.addEventListener('loadedmetadata', () => {
+                    v.play();
+                    startDecoding(v);
+                }, { once: true });
+
+            } catch (e) {
+                setScanStatus('err');
+                showToast('⚠ Lejo aksesin te kamera në cilësimet e shfletuesit');
+            }
+        }
+
+        function startDecoding(video) {
+            const canvas = document.getElementById('scanCanvas');
+            const ctx = canvas.getContext('2d', { willReadFrequently: true });
+
+            scanInterval = setInterval(() => {
+                if (video.readyState < video.HAVE_ENOUGH_DATA) return;
+
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const code = jsQR(imageData.data, imageData.width, imageData.height, {
+                    inversionAttempts: 'dontInvert'
+                });
+
+                if (code && code.data) {
+                    stopScanner();
+                    verifyTicket(code.data);
+                }
+            }, 200); // kontrollo 5 herë në sekondë
+        }
+
+        function stopScanner() {
+            if (scanInterval) { clearInterval(scanInterval); scanInterval = null; }
+            if (scanStream) { scanStream.getTracks().forEach(t => t.stop()); scanStream = null; }
+            const v = document.getElementById('scanVideo');
+            v.srcObject = null;
+            v.style.display = 'none';
+            document.getElementById('scanFrame').style.display = 'none';
+            document.getElementById('scanPlaceholder').style.display = 'block';
+            document.getElementById('scanToggleBtn').textContent = '▶ Fillo';
+            setScanStatus('wait');
+            scanning = false;
+        }
+
+        function setScanStatus(s) {
+            const el = document.getElementById('scanStatus');
+            if (s === 'wait') el.innerHTML = '<span>⏳</span> Duke pritur fillimin e skanimit...';
+            else if (s === 'ok') el.innerHTML = '<span style="color:var(--green-lt)">✓</span> Biletë e vlefshme u gjet!';
+            else if (s === 'fail') el.innerHTML = '<span style="color:var(--red-lt)">✗</span> Biletë e pavlefshme';
+            else el.innerHTML = '<span>❌</span> Kamera nuk u hap — lejo aksesin';
+        }
+
+        function verifyTicket(raw) {
+            const id = raw.includes('|') ? raw.split('|')[0] : raw.trim().toUpperCase();
+            const tickets = JSON.parse(localStorage.getItem('bwu-tickets') || '{}');
+            const t = tickets[id];
+
+            document.getElementById('scanResult').style.display = 'block';
+
+            if (t) {
+                const df = new Date(t.date).toLocaleDateString('sq-AL',
+                    { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+                document.getElementById('resultInfo').innerHTML = `
+      <div class="ri"><div class="ri-l">ID Biletës</div><div class="ri-v id">${id}</div></div>
+      <div class="ri"><div class="ri-l">Udhëtari</div><div class="ri-v">${t.name}</div></div>
+      <div class="ri"><div class="ri-l">Linja</div><div class="ri-v">${t.lineName}</div></div>
+      <div class="ri"><div class="ri-l">Rruga</div><div class="ri-v">${t.route}</div></div>
+      <div class="ri"><div class="ri-l">Data & Ora</div><div class="ri-v">${df}${t.time ? ', ' + t.time : ''}</div></div>
+      <div class="ri"><div class="ri-l">Numri i biletave</div><div class="ri-v">${t.qty}×</div></div>
+      <div class="ri"><div class="ri-l">Totali i paguar</div><div class="ri-v total">${t.total} Lekë</div></div>`;
+                document.getElementById('resultValid').style.display = 'block';
+                document.getElementById('resultInvalid').style.display = 'none';
+                setScanStatus('ok');
+            } else {
+                document.getElementById('resultValid').style.display = 'none';
+                document.getElementById('resultInvalid').style.display = 'block';
+                setScanStatus('fail');
+            }
+        }
+
+        function resetScanner() {
+            document.getElementById('scanResult').style.display = 'none';
+            document.getElementById('resultValid').style.display = 'none';
+            document.getElementById('resultInvalid').style.display = 'none';
+            setScanStatus('wait');
+        }
+
+        // ════ EXPOSE ════
+        Object.assign(window, { switchTab, authSubmit, demoLogin, logout, showTut, tutGo, skipTut, goP, goBook, filterLines, hwCalc, hwSubmit, fcCalc, fcSubmit, pickLine, closeQR, showToast, qbTab, toggleScanner, resetScanner, manualVerify });
+    </script>
+</body>
+
+</html>
